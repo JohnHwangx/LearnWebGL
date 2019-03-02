@@ -23,7 +23,7 @@
             background-color: #eee
         }
 
-        tr:nth-child(odd) {
+        tr:nth-child(even) {
             background-color: #def;
         }
 
@@ -163,7 +163,7 @@ void main(){
         var textureSizeLocation = gl.getUniformLocation(program, "u_textureSize");
         var kernelLocation = gl.getUniformLocation(program, "u_kernel[0]");
         var kernelWeightLocation = gl.getUniformLocation(program, "u_kernelWeight");
-        var flipYLocation = gl.getUniformLocation(program, "u_filpY");
+        var flipYLocation = gl.getUniformLocation(program, "u_flipY");
 
         // 定义一些卷积核
         var kernels = {
@@ -365,29 +365,35 @@ void main(){
             for (var ii = 0; ii < tbody.rows.length; ++ii) {
                 var checkbox = tbody.rows[ii].firstChild.firstChild;
                 if (checkbox.checked) {
-                    setFrameBuffer(framebuffers[count % 2], image.width, image.height);
-                    drawWidthKernel(checkbox.value);
+                    //使用两个帧缓冲中的一个
+                    setFramebuffer(framebuffers[count % 2], image.width, image.height);
+                    drawWithKernel(checkbox.value);
+                    //下次绘制时使用刚才的渲染结果
                     gl.bindTexture(gl.TEXTURE_2D, textures[count % 2]);
                     ++count;
                 }
             }
-            gl.uniform1f(flipYLocation, -1);
-            setFrameBuffer(null, gl.canvas.width, gl.canvas.height);
-            drawWidthKernel("normal");
+            // 最后将结果绘制到画布
+            gl.uniform1f(flipYLocation, -1);// 需要绕y轴翻转
+            setFramebuffer(null, gl.canvas.width, gl.canvas.height);
+            drawWithKernel("normal");
         }
 
-        function setFrameBuffer(fbo, width, height) {
+        function setFramebuffer(fbo, width, height) {
+            // 设定当前使用帧缓冲
             gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+            // 告诉着色器分辨率是多少
             gl.uniform2f(resolutionLocation, width, height);
+            // 告诉WebGL帧缓冲需要的视图大小
             gl.viewport(0, 0, width, height);
         }
 
-        function drawWidthKernel(name) {
-            // set the kernel and it's weight
+        function drawWithKernel(name) {
+            // 设置卷积核
             gl.uniform1fv(kernelLocation, kernels[name]);
             gl.uniform1f(kernelWeightLocation, computeKernelWeight(kernels[name]));
 
-            // Draw the rectangle.
+            // 画出矩形
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 6;

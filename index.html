@@ -2,136 +2,380 @@
 <html>
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Learn WebGL</title>
+    <title>Learn WebGl</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="resources/webgl-tutorials.css">
-    <script id="2d-vertex-shader" type="notjs">
-        // attribute vec4 a_position;
-        attribute vec2 a_position;
-        uniform vec2 u_resolution;
-
-        void main(){
-            // gl_Position = a_position;
-            // 从像素坐标转换到 0.0 到 1.0
-            vec2 zeroToOne = a_position / u_resolution;
-            // 再把 0->1 转换 0->2
-            vec2 zeroToTwo = zeroToOne * 2.0;
-            // 把 0->2 转换到 -1->+1 (裁剪空间)
-            vec2 clipSpace = zeroToTwo - 1.0;
-
-            gl_Position=vec4(clipSpace, 0, 1);
+    <style>
+        @font-face {
+            font-family: 'inconsolata';
+            src: url('files/inconsolata.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
         }
-    </script>
-    <script id="2d-fragment-shader" type="notjs">
-        precision mediump float;
 
-        void main(){
-            gl_FragColor = vec4(1, 0, 0.5, 1);
+        * {
+            box-sizing: border-box;
         }
-    </script>
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            background-color: #ffffff;
+            margin: 0px;
+            height: 100%;
+            color: #555;
+            font-family: 'inconsolata';
+            font-size: 15px;
+            line-height: 18px;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-top: 30px;
+            margin-bottom: 40px;
+            margin-left: 20px;
+            font-size: 25px;
+            font-weight: normal;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: normal;
+        }
+
+        a {
+            color: #2194CE;
+            text-decoration: none;
+        }
+
+        #panel {
+            position: fixed;
+            left: 0px;
+            width: 310px;
+            height: 100%;
+            overflow: auto;
+            background: #fafafa;
+        }
+
+        #panel #content {
+            padding: 0px 20px 20px 20px;
+        }
+
+        #panel #content .link {
+            color: #2194CE;
+            text-decoration: none;
+            cursor: pointer;
+            display: block;
+        }
+
+        #panel #content .selected {
+            color: #ff0000;
+        }
+
+        #panel #content .link:hover {
+            text-decoration: underline;
+        }
+
+        #viewer {
+            position: absolute;
+            border: 0px;
+            left: 310px;
+            width: calc(100% - 310px);
+            height: 100%;
+            overflow: auto;
+        }
+
+        #viewSrcButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px;
+            color: #fff;
+            background-color: #555;
+            opacity: 0.7;
+        }
+
+        #viewSrcButton:hover {
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        .filterBlock {
+            margin: 20px;
+            position: relative;
+        }
+
+        .filterBlock p {
+            margin: 0;
+        }
+
+        #filterInput {
+            width: 100%;
+            padding: 5px;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            border: 1px solid #dedede;
+        }
+
+        #filterInput:focus {
+            border: 1px solid #2194CE;
+        }
+
+        #clearFilterButton {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            margin-top: -8px;
+            width: 16px;
+            height: 16px;
+            font-size: 14px;
+            color: grey;
+            text-align: center;
+            line-height: 0;
+            padding-top: 7px;
+            opacity: .5;
+        }
+
+        #clearFilterButton:hover {
+            opacity: 1;
+        }
+
+        .filtered {
+            display: none !important;
+        }
+
+        #panel li b {
+            font-weight: bold;
+        }
+
+        /* mobile */
+
+        #expandButton {
+            display: none;
+            position: absolute;
+            right: 20px;
+            top: 12px;
+            width: 32px;
+            height: 32px;
+        }
+
+        #expandButton span {
+            height: 2px;
+            background-color: #2194CE;
+            width: 16px;
+            position: absolute;
+            left: 8px;
+            top: 10px;
+        }
+
+        #expandButton span:nth-child(1) {
+            top: 16px;
+        }
+
+        #expandButton span:nth-child(2) {
+            top: 22px;
+        }
+
+        @media all and (max-width: 640px) {
+            h1 {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            #panel {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 480px;
+                width: 100%;
+                right: 0;
+                z-index: 100;
+                overflow: hidden;
+                border-bottom: 1px solid #dedede;
+            }
+
+            #content {
+                position: absolute;
+                left: 0;
+                top: 90px;
+                right: 0;
+                bottom: 0;
+                font-size: 17px;
+                line-height: 22px;
+                overflow: auto;
+            }
+
+            #viewer {
+                position: absolute;
+                left: 0;
+                top: 56px;
+                width: 100%;
+                height: calc(100% - 56px);
+            }
+
+            #expandButton {
+                display: block;
+            }
+
+            #panel.collapsed {
+                height: 56px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <canvas id='c'></canvas>
-    <script src="resources/webgl-utils.js"></script>
+    <div id="panel">
+        <h1><a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-fundamentals.html">WebGL</a> / examples
+        </h1>
+        <div id="content"></div>
+    </div>
+    <iframe id="viewer" name="viewer" allowfullscreen allowvr onmousewheel=""></iframe>
+    <script src="file.js"></script>
+
     <script>
-        function createShader(gl, type, source) {
-            var shader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-            var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-            if (success) {
-                return shader;
+        function extractQuery() {
+            var p = window.location.search.indexOf('?q=');
+            if (p != -1) {
+                return window.location.search.substr(3);
             }
-            console.log(gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
+            return '';
         }
 
-        function createProgram(gl, vertexShader, fragmentShader) {
-            var program = gl.createProgram();
-            gl.attachShader(program, vertexShader);
-            gl.attachShader(program, fragmentShader);
-            gl.linkProgram(program);
-            var success = gl.getProgramParameter(program, gl.LINK_STATUS);
-            if (success) {
-                return program;
-            }
+        var panel = document.getElementById('panel');
+        var content = document.getElementById('content');
+        var viewer = document.getElementById('viewer');
 
-            console.log(gl.getProgramInfoLog(program));
-            gl.deleteProgram(program);
+        var container = document.createElement('div');
+        content.appendChild(container);
+
+        var links = {};
+        var selected = null;
+
+        function createLink(file) {
+
+            var link = document.createElement('a');
+            link.className = 'link';
+            link.href = file + '.html';
+            link.textContent = getName(file);
+            link.setAttribute('target', 'viewer');
+            link.addEventListener('click', function (event) {
+
+                if (event.button != 0 || event.ctrlKey || event.altKey || event.metaKey) return;
+
+                selectFile(file);
+
+            });
+
+            return link;
         }
 
-        function main() {
-            var canvas = document.getElementById("c");
-            var gl = canvas.getContext("webgl");
-            if (!gl) {
-                return;
+        for (var key in files) {
+
+            var section = files[key];
+
+            var header = document.createElement('h2');
+            header.textContent = key;
+            header.setAttribute('data-category', key);
+            container.appendChild(header);
+
+            for (let i = 0; i < section.length; i++) {
+
+                let file = section[i];
+
+                let link = createLink(file);
+                container.appendChild(link);
+
+                links[file] = link;
             }
 
-            var vertexShaderSource = document.getElementById("2d-vertex-shader").text;
-            var fragmentShaderSource = document.getElementById("2d-fragment-shader").text;
-
-            var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-            var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-
-            var program = createProgram(gl, vertexShader, fragmentShader);
-
-            var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-
-            var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-
-            var positionBuffer = gl.createBuffer();
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-            // var position = [
-            //     0, 0,
-            //     0, 0.5,
-            //     0.7, 0
-            // ];//裁剪坐标
-
-            var position = [
-                10,20,
-                80,20,
-                10,30,
-                10,30,
-                80,20,
-                80,30,
-            ];
-
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(position), gl.STATIC_DRAW);
-
-            webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-
-            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-            gl.clearColor(0, 0, 0, 0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-
-            gl.useProgram(program);
-
-            gl.enableVertexAttribArray(positionAttributeLocation);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-            var size = 2;
-            var type = gl.FLOAT;
-            var normalize = false;
-            var stride = 0;
-            var offset = 0;
-            gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
-
-            gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-
-            var primitiveType = gl.TRIANGLES;
-            var offset = 0;
-            var count = 6;
-            gl.drawArrays(primitiveType, offset, count);
         }
 
-        main();
+        function loadFile(file) {
+            selectFile(file);
+            viewer.src = file + '.html';
+        }
+
+        function selectFile(file) {
+            if (selected !== null) {
+                links[selected].classList.remove('selected');
+            }
+            
+            links[file].classList.add('selected');
+
+            window.location.hash = file;
+
+            viewer.focus();
+
+            panel.classList.add('collapsed');
+
+            selected = file;
+        }
+
+        if (window.location.hash !== '') {
+
+            loadFile(window.location.hash.substring(1));
+
+        }
+
+        function updateFilter() {
+            for (let key in files) {
+                let section = files[key];
+                for (let i = 0; i < section.length; i++) {
+                    filterExample(section[i]);
+                }
+            }
+            layoutList();
+        }
+
+        function filterExample(file) {
+            let link = links[file];
+            let name = getName(file);
+            link.classList.add('filtered');
+            link.innerHTML = name;
+        }
+
+        function getName(file) {
+            var name = file.split('_');
+            name.shift();
+            return name.join(' / ');
+        }
+
+        function layoutList() {
+
+            for (let key in files) {
+
+                let collapsed = true;
+                let section = files[key];
+
+                for (let i = 0; i < section.length; i++) {
+
+                    let file = section[i];
+
+                    if (!links[file].classList.contains('filtered')) {
+                        collapsed = false;
+                        break;
+                    }
+                }
+
+                let element = document.querySelector('h2[data-category="' + key + '"]');
+
+                if (collapsed) {
+
+                    element.classList.add('filtered');
+
+                } else {
+
+                    element.classList.remove('filtered');
+                }
+            }
+        }
+
+        updateFilter();
 
     </script>
 </body>
