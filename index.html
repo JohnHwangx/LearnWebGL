@@ -54,7 +54,7 @@
         #panel {
             position: fixed;
             left: 0px;
-            width: 310px;
+            width: 450px;
             height: 100%;
             overflow: auto;
             background: #fafafa;
@@ -261,7 +261,7 @@
             var link = document.createElement('a');
             link.className = 'link';
             link.href = file + '.html';
-            link.textContent = getName(file);
+            link.textContent = file;
             link.setAttribute('target', 'viewer');
             link.addEventListener('click', function (event) {
 
@@ -340,7 +340,7 @@
         }
 
         function getName(file) {
-            var name = file.split('_');
+            var name = file.split('-');
             name.shift();
             return name.join(' / ');
         }
