@@ -2,7 +2,7 @@ var files = {
     "Fundamentals": [
         "webgl-fundamentals",
         "webgl-2d-rectangle",
-        "webgl-2d-rectangle-top-left.",
+        "webgl-2d-rectangle-top-left",
         "webgl-2d-rectangles",
         "webgl-2d-triangle-with-position-for-color",
         "webgl-2d-rectangle-with-2-colors",
