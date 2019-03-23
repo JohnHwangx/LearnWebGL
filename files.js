@@ -17,19 +17,31 @@ var files = {
     ],
     "2D Translation,rotation,scale,matrix math": [
         "webgl-2d-rectangle-translate",
-        "",
-        ""],
+        "webgl-2d-geometry-translate-better",
+        "webgl-2d-geometry-rotation",
+        "webgl-2d-geometry-rotation-angle",
+        "webgl-2d-geometry-scale",
+        "webgl-2d-geometry-matrix-transform",
+        "webgl-2d-geometry-matrix-transform-trs",
+        "webgl-2d-geometry-matrix-transform-hierarchical",
+        "webgl-2d-geometry-matrix-transform-center-f",
+        "webgl-2d-geometry-matrix-transform-with-projection",
+        "webgl-2d-geometry-matrix-transform-simpler-functions"],
     "3D": [
+        "webgl-3d-step1",
+        "webgl-3d-step2",
+        "webgl-3d-step3",
+        "webgl-3d-step4",
+        "webgl-3d-step5",
+        "webgl-3d-step6",
+        ""
+    ],
+    "Lighting": [
         "",
         "",
         ""
     ],
-    "Lighting":[
-        "",
-        "",
-        ""
-    ],
-    "Structure and Organization":[
+    "Structure and Organization": [
         "",
         ""
     ]
