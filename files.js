@@ -7,7 +7,8 @@ var files = {
         "webgl-2d-triangle-with-position-for-color",
         "webgl-2d-rectangle-with-2-colors",
         "webgl-2d-rectangle-with-random-colors",
-        "webgl-2d-rectangle-with-2-byte-colors"],
+        "webgl-2d-rectangle-with-2-byte-colors"
+    ],
     "Image Processing": [
         "webgl-2d-image",
         "webgl-2d-image-red2blue",
@@ -26,7 +27,8 @@ var files = {
         "webgl-2d-geometry-matrix-transform-hierarchical",
         "webgl-2d-geometry-matrix-transform-center-f",
         "webgl-2d-geometry-matrix-transform-with-projection",
-        "webgl-2d-geometry-matrix-transform-simpler-functions"],
+        "webgl-2d-geometry-matrix-transform-simpler-functions"
+    ],
     "3D": [
         "webgl-3d-step1",
         "webgl-3d-step2",
@@ -34,12 +36,18 @@ var files = {
         "webgl-3d-step4",
         "webgl-3d-step5",
         "webgl-3d-step6",
-        ""
+        "webgl-3d-perspective",
+        "webgl-3d-perspective-w",
+        "webgl-3d-perspective-w-matrix",
+        "webgl-3d-perspective-matrix",
+        "webgl-3d-camera",
+        "webgl-3d-camera-look-at",
+        "webgl-3d-camera-look-at-heads"
     ],
     "Lighting": [
-        "",
-        "",
-        ""
+        "webgl-3d-lighting-directional",
+        "webgl-3d-lighting-directional-world",
+        "webgl-3d-lighting-directional-worldinversetranspose"
     ],
     "Structure and Organization": [
         "",
