@@ -47,10 +47,39 @@ var files = {
     "Lighting": [
         "webgl-3d-lighting-directional",
         "webgl-3d-lighting-directional-world",
-        "webgl-3d-lighting-directional-worldinversetranspose"
+        "webgl-3d-lighting-directional-worldinversetranspose",
+        "webgl-3d-lighting-point",
+        "webgl-3d-lighting-point-specular-power",
+        "webgl-3d-lighting-point-color",
+        "webgl-3d-lighting-spot",
+        "webgl-3d-lighting-spot-falloff",
+        "webgl-3d-lighting-spot-falloff-using-smoothstep"
     ],
     "Structure and Organization": [
-        "",
-        ""
+        "webgl-less-code-more-fun",
+        "webgl-less-code-more-fun-triangle",
+        "webgl-less-code-more-fun-quad",
+        "webgl-less-code-more-fun-quad-guess",
+        "webgl-less-code-more-fun-quad-programinfo",
+        "webgl-multiple-objects-manual",
+        "webgl-multiple-objects-list",
+        "webgl-multiple-objects-list-optimized",
+        "webgl-scene-graph-solar-system",
+        "webgl-scene-graph-solar-system-larger-earth",
+        "webgl-scene-graph-solar-system-larger-earth-fixed",
+        "webgl-scene-graph-solar-system-adjusted",
+        "webgl-scene-graph-block-guy"
+    ],
+    "Geometry":[
+        "webgl-3d-lathe-step-01",
+        "webgl-3d-lathe-step-02",
+        "webgl-3d-lathe-step-03"
+    ],
+    "Textures":[
+        "webgl-3d-textures",
+        "webgl-3d-textures-texture-coords-mapped",
+        "webgl-3d-textures-repeat-clamp",
+        "webgl-3d-textures-mips",
+        "webgl-3d-textures-mips-tri-linear"
     ]
 }
