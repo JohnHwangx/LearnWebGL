@@ -5,13 +5,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>WebGL - 2D Rectangle Top Left</title>
+    <title>WebGL - Fundamentals</title>
     <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
     <canvas id="c"></canvas>
 </body>
+
+</html>
 <!--
 for most samples webgl-utils only provides shader compiling/linking and
 canvas resizing because why clutter the examples with code that's the same in every sample.
@@ -20,32 +22,33 @@ and http://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
 for webgl-utils, m3, m4, and webgl-lessons-ui.
 -->
 <script src="resources/webgl-utils.js"></script>
-<!-- vertex shader -->
 <script id="2d-vertex-shader" type="notjs">
+
+  // an attribute will receive data from a buffer
   attribute vec4 a_position;
 
-  uniform vec2 u_resolution;
-
+  // all shaders have a main function
   void main() {
-     // convert the position from pixels to 0.0 to 1.0
-     vec2 zeroToOne = a_position.xy / u_resolution;
 
-     // convert from 0->1 to 0->2
-     vec2 zeroToTwo = zeroToOne * 2.0;
-
-     // convert from 0->2 to -1->+1 (clipspace)
-     vec2 clipSpace = zeroToTwo - 1.0;
-
-     gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    // gl_Position is a special variable a vertex shader
+    // is responsible for setting
+    gl_Position = a_position;
   }
+
 </script>
-<!-- fragment shader -->
+
 <script id="2d-fragment-shader" type="notjs">
+
+  // fragment shaders don't have a default precision so we need
+  // to pick one. mediump is a good default
   precision mediump float;
 
   void main() {
+    // gl_FragColor is a special variable a fragment shader
+    // is responsible for setting
     gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
   }
+
 </script>
 <script>
     "use strict";
@@ -58,30 +61,38 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             return;
         }
 
-        // Use our boilerplate utils to compile the shaders and link into a program
+        // setup GLSL program
         var program = webglUtils.createProgramFromScripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
 
         // look up where the vertex data needs to go.
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
-        // look up uniform locations
-        var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-
-        // Create a buffer and put three 2d clip space points in it
+        // Create a buffer and put 12 clip space points in it.
+        // 4 rectangles, 2 triangles each, 3 vertices per triangle
         var positionBuffer = gl.createBuffer();
 
         // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         var positions = [
-            10, 20,
-            80, 20,
-            10, 30,
-            10, 30,
-            80, 20,
-            80, 30,
+            -.8, .8, 0, 1,  // 1st rect 1st triangle
+            .8, .8, 0, 1,
+            -.8, .2, 0, 1,
+            -.8, .2, 0, 1,  // 1st rect 2nd triangle
+            .8, .8, 0, 1,
+            .8, .2, 0, 1,
+
+            -.8, -.2, 0, 1,  // 2nd rect 1st triangle
+            .8, -.2, 0, 1,
+            -.8, -.8, 0, 1,
+            -.8, -.8, 0, 1,  // 2nd rect 2nd triangle
+            .8, -.2, 0, 1,
+            .8, -.8, 0, 1,
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+        // code above this line is initialization code.
+        // code below this line is rendering code.
 
         webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -102,7 +113,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-        var size = 2;          // 2 components per iteration
+        var size = 4;          // 4 components per iteration
         var type = gl.FLOAT;   // the data is 32bit floats
         var normalize = false; // don't normalize the data
         var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
@@ -110,17 +121,12 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         gl.vertexAttribPointer(
             positionAttributeLocation, size, type, normalize, stride, offset);
 
-        // set the resolution
-        gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-
         // draw
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
-        var count = 6;
+        var count = 4 * 3;   // 4 triangles, 3 vertices each
         gl.drawArrays(primitiveType, offset, count);
     }
 
     main();
 </script>
-
-</html>

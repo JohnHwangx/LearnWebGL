@@ -82,8 +82,8 @@
         #viewer {
             position: absolute;
             border: 0px;
-            left: 310px;
-            width: calc(100% - 310px);
+            left: 450px;
+            width: calc(100% - 450px);
             height: 100%;
             overflow: auto;
         }
@@ -179,52 +179,6 @@
         #expandButton span:nth-child(2) {
             top: 22px;
         }
-
-        @media all and (max-width: 640px) {
-            h1 {
-                margin-top: 20px;
-                margin-bottom: 20px;
-            }
-
-            #panel {
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 480px;
-                width: 100%;
-                right: 0;
-                z-index: 100;
-                overflow: hidden;
-                border-bottom: 1px solid #dedede;
-            }
-
-            #content {
-                position: absolute;
-                left: 0;
-                top: 90px;
-                right: 0;
-                bottom: 0;
-                font-size: 17px;
-                line-height: 22px;
-                overflow: auto;
-            }
-
-            #viewer {
-                position: absolute;
-                left: 0;
-                top: 56px;
-                width: 100%;
-                height: calc(100% - 56px);
-            }
-
-            #expandButton {
-                display: block;
-            }
-
-            #panel.collapsed {
-                height: 56px;
-            }
-        }
     </style>
 </head>
 
@@ -261,7 +215,7 @@
             var link = document.createElement('a');
             link.className = 'link';
             link.href = file + '.html';
-            link.textContent = file;
+            link.textContent = file.substring(file.indexOf('-')+1);
             link.setAttribute('target', 'viewer');
             link.addEventListener('click', function (event) {
 

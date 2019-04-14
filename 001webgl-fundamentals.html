@@ -10,7 +10,12 @@
 </head>
 
 <body>
-    <canvas id="c"></canvas>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-fundamentals.html" target="_blank">WebGL 基础概念</a>
+    
+    <!-- <div class="description">
+        Drag sliders to translate, rotate, and scale.
+    </div> -->
+    <canvas id="canvas"></canvas>
 </body>
 
 </html>
@@ -24,14 +29,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 <script src="resources/webgl-utils.js"></script>
 <script id="2d-vertex-shader" type="notjs">
 
-  // an attribute will receive data from a buffer
+  // 一个属性值，将会从缓冲中获取数据
   attribute vec4 a_position;
 
-  // all shaders have a main function
+  // 所有着色器都有一个main方法
   void main() {
 
-    // gl_Position is a special variable a vertex shader
-    // is responsible for setting
+    // gl_Position 是一个顶点着色器主要设置的变量
     gl_Position = a_position;
   }
 
@@ -39,14 +43,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
 <script id="2d-fragment-shader" type="notjs">
 
-  // fragment shaders don't have a default precision so we need
-  // to pick one. mediump is a good default
+  // 片断着色器没有默认精度，所以我们需要设置一个精度
+  // mediump是一个不错的默认值，代表“medium precision”（中等精度）
   precision mediump float;
 
   void main() {
-    // gl_FragColor is a special variable a fragment shader
-    // is responsible for setting
-    gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+    // gl_FragColor是一个片断着色器主要设置的变量
+    gl_FragColor = vec4(1, 0, 0.5, 1); // 返回“瑞迪施紫色”
   }
 
 </script>
@@ -54,10 +57,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     /* eslint no-console:0 consistent-return:0 */
     "use strict";
 
+    // 创建着色器方法，输入参数：渲染上下文，着色器类型，数据源
     function createShader(gl, type, source) {
-        var shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
+        var shader = gl.createShader(type);// 创建着色器对象
+        gl.shaderSource(shader, source);// 提供数据源
+        gl.compileShader(shader);// 编译 -> 生成着色器
         var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
         if (success) {
             return shader;
@@ -66,13 +70,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         console.log(gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
     }
-
+    // 然后我们将这两个着色器 link（链接）到一个 program（着色程序）
     function createProgram(gl, vertexShader, fragmentShader) {
-        var program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-        var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+        var program = gl.createProgram();//创建着色程序
+        gl.attachShader(program, vertexShader);// 附加顶点着色器
+        gl.attachShader(program, fragmentShader);// 附加片元着色器
+        gl.linkProgram(program);//链接到着色程序
+        var success = gl.getProgramParameter(program, gl.LINK_STATUS);//判断着色程序是否创建成功
         if (success) {
             return program;
         }
@@ -82,33 +86,33 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     }
 
     function main() {
-        // Get A WebGL context
-        var canvas = document.getElementById("c");
+        // 获取WebGL上下文
+        var canvas = document.getElementById("canvas");
         var gl = canvas.getContext("webgl");
         if (!gl) {
             return;
         }
 
-        // Get the strings for our GLSL shaders
+        // 获取着色器字符串
         var vertexShaderSource = document.getElementById("2d-vertex-shader").text;
         var fragmentShaderSource = document.getElementById("2d-fragment-shader").text;
 
-        // create GLSL shaders, upload the GLSL source, compile the shaders
+        // 创建，加载，编译着色器
         var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
         var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-
-        // Link the two shaders into a program
+        
+        // 链接连个着色器到着色程序
         var program = createProgram(gl, vertexShader, fragmentShader);
 
-        // look up where the vertex data needs to go.
+        // 从刚才创建的GLSL着色程序中找到a_position属性值所在的位置
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
-        // Create a buffer and put three 2d clip space points in it
+        // 属性值从缓冲中获取数据，所以我们创建一个缓冲
         var positionBuffer = gl.createBuffer();
 
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+        // 绑定位置信息缓冲（下面的绑定点就是ARRAY_BUFFER）
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
+        // 三个二维点坐标
         var positions = [
             0, 0,
             0, 0.5,
@@ -116,37 +120,37 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-        // code above this line is initialization code.
-        // code below this line is rendering code.
+        // 在此之上的代码是 初始化代码。这些代码在页面加载时只会运行一次。
+        // 接下来的代码是渲染代码，而这些代码将在我们每次要渲染或者绘制时执行。
 
         webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
-        // Tell WebGL how to convert from clip space to pixels
+        // 告诉WebGL怎样把提供的gl_Position裁剪空间坐标对应到画布像素坐标（屏幕空间）
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-        // Clear the canvas
+        // 清空画布
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        // Tell it to use our program (pair of shaders)
+        // 告诉它用我们之前写好的着色程序（一个着色器对）
         gl.useProgram(program);
 
-        // Turn on the attribute
+        // 启用对应属性
         gl.enableVertexAttribArray(positionAttributeLocation);
 
-        // Bind the position buffer.
+        // 将绑定点绑定到缓冲数据（positionBuffer）
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-        var size = 2;          // 2 components per iteration
-        var type = gl.FLOAT;   // the data is 32bit floats
-        var normalize = false; // don't normalize the data
-        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-        var offset = 0;        // start at the beginning of the buffer
+        // 告诉属性怎么从positionBuffer中读取数据 (ARRAY_BUFFER)
+        var size = 2;          // 每次迭代运行提取两个单位数据
+        var type = gl.FLOAT;   // 每个单位的数据类型是32位浮点型
+        var normalize = false; // 不需要归一化数据
+        var stride = 0;        // 0 = 移动单位数量 * 每个单位占用内存（sizeof(type)）每次迭代运行运动多少内存到下一个数据开始点
+        var offset = 0;        // 从缓冲起始位置开始读取
         gl.vertexAttribPointer(
             positionAttributeLocation, size, type, normalize, stride, offset);
 
-        // draw
+        // 绘制
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
         var count = 3;

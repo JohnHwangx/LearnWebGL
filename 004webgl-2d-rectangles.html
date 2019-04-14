@@ -10,36 +10,38 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-fundamentals.html" target="_blank">WebGL 基础概念</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
-attribute vec2 a_position;
+    attribute vec2 a_position;
 
-uniform vec2 u_resolution;
+    uniform vec2 u_resolution;
 
-void main() {
-   // convert the rectangle from pixels to 0.0 to 1.0
-   vec2 zeroToOne = a_position / u_resolution;
+    void main() {
+        // 从像素坐标转换到 0.0 到 1.0
+        vec2 zeroToOne = a_position / u_resolution;
 
-   // convert from 0->1 to 0->2
-   vec2 zeroToTwo = zeroToOne * 2.0;
+        // 再把 0->1 转换 0->2
+        vec2 zeroToTwo = zeroToOne * 2.0;
 
-   // convert from 0->2 to -1->+1 (clipspace)
-   vec2 clipSpace = zeroToTwo - 1.0;
+        // 把 0->2 转换到 -1->+1 (裁剪空间)
+        vec2 clipSpace = zeroToTwo - 1.0;
 
-   gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-}
+        // 翻转y轴，使起点在左上角
+        gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    }
 </script>
 <!-- fragment shader -->
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
-precision mediump float;
+    precision mediump float;
+    // 通过全局变量接收自定义颜色
+    uniform vec4 u_color;
 
-uniform vec4 u_color;
-
-void main() {
-   gl_FragColor = u_color;
-}
+    void main() {
+        gl_FragColor = u_color;
+    }
 </script>
 <!--
 for most samples webgl-utils only provides shader compiling/linking and
@@ -53,7 +55,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     "use strict";
 
     function main() {
-        // Get A WebGL context
+        // 获取WebGL上下文
         /** @type {HTMLCanvasElement} */
         var canvas = document.getElementById("canvas");
         var gl = canvas.getContext("webgl");
@@ -61,65 +63,64 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             return;
         }
 
-        // setup GLSL program
+        // 创建着色程序
         var program = webglUtils.createProgramFromScripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
 
-        // look up where the vertex data needs to go.
+        // 从着色程序中找到attribute属性值所在的位置
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
-        // look up uniform locations
+        // 从着色程序中找到Uniform属性值所在的位置
         var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
         var colorUniformLocation = gl.getUniformLocation(program, "u_color");
 
-        // Create a buffer to put three 2d clip space points in
+        // 创建存放三个2维裁剪空间点的缓存
         var positionBuffer = gl.createBuffer();
 
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+        // 绑定位置信息缓冲（下面的绑定点就是ARRAY_BUFFER）
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
-        // Tell WebGL how to convert from clip space to pixels
+        // 告诉WebGl怎样把裁剪空间坐标对应到屏幕坐标
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-        // Clear the canvas
+        // 清空画布
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        // Tell it to use our program (pair of shaders)
+        // 告诉它用我们之前写好的着色程序（一个着色器对）
         gl.useProgram(program);
 
-        // Turn on the attribute
+        // 启用对应属性
         gl.enableVertexAttribArray(positionAttributeLocation);
 
-        // Bind the position buffer.
+        // 将绑定点绑定到缓冲数据（positionBuffer）
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-        var size = 2;          // 2 components per iteration
-        var type = gl.FLOAT;   // the data is 32bit floats
-        var normalize = false; // don't normalize the data
-        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-        var offset = 0;        // start at the beginning of the buffer
+        // 告诉属性怎么从positionBuffer中读取数据 (ARRAY_BUFFER)
+        var size = 2;          // 每次迭代运行提取两个单位数据
+        var type = gl.FLOAT;   // 每个单位的数据类型是32位浮点型
+        var normalize = false; // 不需要归一化数据
+        var stride = 0;        // 0 = 移动单位数量 * 每个单位占用内存（sizeof(type)）每次迭代运行运动多少内存到下一个数据开始点
+        var offset = 0;        // 从缓冲起始位置开始读取
         gl.vertexAttribPointer(
             positionAttributeLocation, size, type, normalize, stride, offset);
 
-        // set the resolution
+        // 设置全局变量 分辨率
         gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-        // draw 50 random rectangles in random colors
+        // 绘制50个随机颜色矩形
         for (var ii = 0; ii < 50; ++ii) {
-            // Setup a random rectangle
-            // This will write to positionBuffer because
-            // its the last thing we bound on the ARRAY_BUFFER
-            // bind point
+            // 创建一个随机矩形
+            // 并将写入位置缓冲
+            // 因为位置缓冲是我们绑定在`ARRAY_BUFFER`绑定点上的最后一个缓冲
             setRectangle(
-                gl, randomInt(300), randomInt(300), randomInt(300), randomInt(300));
+                gl, randomInt(300), randomInt(300), randomInt(400), randomInt(400));
 
-            // Set a random color.
+            // 设置一个随机颜色
             gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
 
-            // Draw the rectangle.
+            // 绘制矩形
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 6;
@@ -127,17 +128,22 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         }
     }
 
-    // Returns a random integer from 0 to range - 1.
+    // 返回 0 到 range 范围内的随机整数
     function randomInt(range) {
         return Math.floor(Math.random() * range);
     }
 
-    // Fill the buffer with the values that define a rectangle.
+    // 用参数生成矩形顶点并写进缓冲    
     function setRectangle(gl, x, y, width, height) {
         var x1 = x;
         var x2 = x + width;
         var y1 = y;
         var y2 = y + height;
+
+        // 注意: gl.bufferData(gl.ARRAY_BUFFER, ...) 将会影响到
+        // 当前绑定点`ARRAY_BUFFER`的绑定缓冲
+        // 目前我们只有一个缓冲，如果我们有多个缓冲
+        // 我们需要先将所需缓冲绑定到`ARRAY_BUFFER`
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
             x1, y1,
             x2, y1,

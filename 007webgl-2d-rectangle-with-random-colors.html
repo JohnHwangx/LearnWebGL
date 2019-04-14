@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-how-it-works.html" target="_blank">WebGL 工作原理</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -26,30 +27,30 @@
 </body>
 <!-- vertex shader -->
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
-attribute vec2 a_position;
-attribute vec4 a_color;
+    attribute vec2 a_position;
+    attribute vec4 a_color;
 
-uniform mat3 u_matrix;
+    uniform mat3 u_matrix;
 
-varying vec4 v_color;
+    varying vec4 v_color;
 
-void main() {
-  // Multiply the position by the matrix.
-  gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+    void main() {
+        // 将位置和矩阵相乘
+        gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
 
-  // Copy the color from the attribute to the varying.
-  v_color = a_color;
-}
+        // 直接把属性值中的数据赋给可变量
+        v_color = a_color;
+    }
 </script>
 <!-- fragment shader -->
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
-precision mediump float;
+    precision mediump float;
 
-varying vec4 v_color;
+    varying vec4 v_color;
 
-void main() {
-  gl_FragColor = v_color;
-}
+    void main() {
+        gl_FragColor = v_color;
+    }
 </script>
 <!--
 for most samples webgl-utils only provides shader compiling/linking and
@@ -65,7 +66,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     "use strict";
 
     function main() {
-        // Get A WebGL context
+        // 获取WebGL上下文
         /** @type {HTMLCanvasElement} */
         var canvas = document.getElementById("canvas");
         var gl = canvas.getContext("webgl");
@@ -73,26 +74,26 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             return;
         }
 
-        // setup GLSL program
+        // 创建着色程序
         var program = webglUtils.createProgramFromScripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
 
-        // look up where the vertex data needs to go.
+        // 从着色程序中找到attribute属性值所在的位置
         var positionLocation = gl.getAttribLocation(program, "a_position");
         var colorLocation = gl.getAttribLocation(program, "a_color");
 
-        // lookup uniforms
+        // 从着色程序中找到Uniform属性值所在的位置
         var matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
-        // Create a buffer for the positons.
+        // 创建存放三个2维裁剪空间点的缓存
         var positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        // Set Geometry.
+        // 设置几何
         setGeometry(gl);
 
-        // Create a buffer for the colors.
+        // 给颜色数据创建一个缓冲
         var colorBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        // Set the colors.
+        // 设置颜色
         setColors(gl);
 
         var translation = [200, 150];
@@ -101,7 +102,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
         drawScene();
 
-        // Setup a ui.
+        // 创建交互控制栏
         webglLessonsUI.setupSlider("#x", { value: translation[0], slide: updatePosition(0), max: gl.canvas.width });
         webglLessonsUI.setupSlider("#y", { value: translation[1], slide: updatePosition(1), max: gl.canvas.height });
         webglLessonsUI.setupSlider("#angle", { slide: updateAngle, max: 360 });
@@ -128,59 +129,59 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             };
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene() {
             webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
-            // Tell WebGL how to convert from clip space to pixels
+            // 告诉WebGL怎样把提供的gl_Position裁剪空间坐标对应到画布像素坐标（屏幕空间）
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-            // Clear the canvas.
+            // 清空画布
             gl.clear(gl.COLOR_BUFFER_BIT);
 
-            // Tell it to use our program (pair of shaders)
+            // 告诉它用我们之前写好的着色程序（一个着色器对）
             gl.useProgram(program);
 
-            // Turn on the position attribute
+            // 启用对应属性
             gl.enableVertexAttribArray(positionLocation);
 
-            // Bind the position buffer.
+            // 将绑定点绑定到缓冲数据（positionBuffer）
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-            // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-            var size = 2;          // 2 components per iteration
-            var type = gl.FLOAT;   // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;        // start at the beginning of the buffer
+            // 告诉属性怎么从positionBuffer中读取数据(ARRAY_BUFFER)
+            var size = 2;          // 每次迭代运行提取两个单位数据
+            var type = gl.FLOAT;   // 每个单位的数据类型是32位浮点型
+            var normalize = false; // 不需要归一化数据
+            var stride = 0;        // 0 = 移动单位数量 * 每个单位占用内存（sizeof(type)）每次迭代运行运动多少内存到下一个数据开始点
+            var offset = 0;        // 从缓冲起始位置开始读取
             gl.vertexAttribPointer(
                 positionLocation, size, type, normalize, stride, offset);
 
-            // Turn on the color attribute
+            // 启用颜色属性
             gl.enableVertexAttribArray(colorLocation);
 
-            // Bind the color buffer.
+            // 绑定颜色缓冲
             gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 
-            // Tell the color attribute how to get data out of colorBuffer (ARRAY_BUFFER)
-            var size = 4;          // 4 components per iteration
-            var type = gl.FLOAT;   // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;        // start at the beginning of the buffer
+            // 告诉颜色属性怎么从 colorBuffer (ARRAY_BUFFER) 中读取颜色值
+            var size = 4;          // 每次迭代使用4个单位的数据
+            var type = gl.FLOAT;   // 单位数据类型是32位的浮点型
+            var normalize = false; // 不需要归一化数据
+            var stride = 0;        // 0 = 移动距离 * 单位距离长度sizeof(type) 每次迭代跳多少距离到下一个数据
+            var offset = 0;        // 从绑定缓冲的起始处开始
             gl.vertexAttribPointer(
                 colorLocation, size, type, normalize, stride, offset);
 
-            // Compute the matrix
+            // 计算矩阵
             var matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
             matrix = m3.translate(matrix, translation[0], translation[1]);
             matrix = m3.rotate(matrix, angleInRadians);
             matrix = m3.scale(matrix, scale[0], scale[1]);
 
-            // Set the matrix.
+            // 设置着色程序矩阵
             gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
-            // Draw the geometry.
+            // 绘制几何体
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 6;
@@ -189,9 +190,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     }
 
 
-    // Fill the buffer with the values that define a rectangle.
-    // Note, will put the values in whatever buffer is currently
-    // bound to the ARRAY_BUFFER bind point
+    // 定义一个矩形填充到缓冲里
     function setGeometry(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,
@@ -205,12 +204,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.STATIC_DRAW);
     }
 
-    // Fill the buffer with colors for the 2 triangles
-    // that make the rectangle.
-    // Note, will put the values in whatever buffer is currently
-    // bound to the ARRAY_BUFFER bind point
+    // 给矩形的两个三角形
+    // 设置颜色值并发到缓冲
     function setColors(gl) {
-        // Make every vertex a different color.
+        // 给每个顶点定义不同的颜色
         gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array(
