@@ -1,16 +1,16 @@
 var files = {
     "Fundamentals": [
-        "webgl-fundamentals",
-        "webgl-2d-rectangle",
-        "webgl-2d-rectangle-top-left",
-        "webgl-2d-rectangles",
-        "webgl-2d-triangle-with-position-for-color",
-        "webgl-2d-rectangle-with-2-colors",
-        "webgl-2d-rectangle-with-random-colors",
-        "webgl-2d-rectangle-with-2-byte-colors"
+        "001webgl-fundamentals",
+        "002webgl-2d-rectangle",
+        "003webgl-2d-rectangle-top-left",
+        "004webgl-2d-rectangles",
+        "005webgl-2d-triangle-with-position-for-color",
+        "006webgl-2d-rectangle-with-2-colors",
+        "007webgl-2d-rectangle-with-random-colors",
+        "008webgl-2d-rectangle-with-2-byte-colors"
     ],
     "Image Processing": [
-        "webgl-2d-image",
+        "009webgl-2d-image",
         "webgl-2d-image-red2blue",
         "webgl-2d-image-blend",
         "webgl-2d-image-3x3-convolution",
@@ -80,6 +80,22 @@ var files = {
         "webgl-3d-textures-texture-coords-mapped",
         "webgl-3d-textures-repeat-clamp",
         "webgl-3d-textures-mips",
-        "webgl-3d-textures-mips-tri-linear"
+        "webgl-3d-textures-mips-tri-linear",
+        "webgl-3d-textures-good-npot",
+        "webgl-3d-textures-texture-atlas",
+        "webgl-data-texture-3x2",
+        "webgl-2-textures",
+        "webgl-cors-permission-good",
+        "webgl-clipspace-rectangles",
+        "webgl-clipspace-rectangles-with-varying",
+        "webgl-clipspace-rectangles-with-varying-non-1-w",
+        "webgl-clipspace-rectangles-with-varying-non-1-w-repeat",
+        "webgl-perspective-correct-cube",
+        "webgl-non-perspective-correct-cube"
+    ],
+    "Rendering To A Texture":[
+        "webgl-render-to-texture",
+        "webgl-render-to-texture-3-cubes-no-depth-buffer",
+        "webgl-render-to-texture-3-cubes-with-depth-buffer"
     ]
 }
