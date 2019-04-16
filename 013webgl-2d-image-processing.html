@@ -19,7 +19,8 @@
         .tDnD_whileDrag {
             background-color: #daf;
         }
-        tr:nth-child(odd){
+
+        tr:nth-child(odd) {
             background-color: #eee
         }
 
@@ -110,7 +111,7 @@ void main(){
         }
 
         var program = webglUtils.createProgramFromScripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
-        
+
         var positionLocation = gl.getAttribLocation(program, "a_position");
         var texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
 
@@ -172,6 +173,7 @@ void main(){
                 0, 1, 0,
                 0, 0, 0
             ],
+            // 高斯模糊
             gaussianBlur: [
                 0.045, 0.122, 0.045,
                 0.122, 0.332, 0.122,
@@ -187,6 +189,7 @@ void main(){
                 1, 1, 1,
                 0, 1, 0
             ],
+            //非锐化
             unsharpen: [
                 -1, -1, -1,
                 -1, 9, -1,
@@ -197,11 +200,13 @@ void main(){
                 -1, 5, -1,
                 0, -1, 0
             ],
+            //锐化
             sharpen: [
                 -1, -1, -1,
                 -1, 16, -1,
                 -1, -1, -1
             ],
+            //边缘检测
             edgeDetect: [
                 -0.125, -0.125, -0.125,
                 -0.125, 1, -0.125,
@@ -304,7 +309,7 @@ void main(){
             }
             chk.onchange = drawEffects;
             td.appendChild(chk);
-            td.appendChild(document.createTextNode('= ' + effect.name));
+            td.appendChild(document.createTextNode(effect.name));
             tr.appendChild(td);
             tbody.appendChild(tr);
         }

@@ -160,7 +160,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // 将绑定点绑定到缓冲数据
         gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 
-        // 告诉属性怎么从positionBuffer中读取数据(ARRAY_BUFFER)
+        // 告诉属性怎么从texcoordBuffer中读取数据(ARRAY_BUFFER)
         var size = 2;          // 每次迭代运行提取两个单位数据
         var type = gl.FLOAT;   // 每个单位的数据类型是32位浮点型
         var normalize = false; // 不需要归一化数据
