@@ -169,10 +169,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var rotationMatrix = m3.rotation(angleInRadians);
             var scaleMatrix = m3.scaling(scale[0], scale[1]);
 
-            // make a matrix that will move the origin of the 'F' to its center.
+            // 创建一个矩阵，可以将原点移动到 'F' 的中心
             var moveOriginMatrix = m3.translation(-50, -75);
 
-            // Multiply the matrices.
+            // 矩阵相乘
             var matrix = m3.multiply(translationMatrix, rotationMatrix);
             matrix = m3.multiply(matrix, scaleMatrix);
             matrix = m3.multiply(matrix, moveOriginMatrix);

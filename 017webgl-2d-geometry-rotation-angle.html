@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-2d-rotation.html" target="_blank">WebGL 二维旋转</a>
     <div class="description">
         Drag sliders to translate & rotate.
     </div>
@@ -118,7 +119,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 drawScene();
             };
         }
-
+        // 使用滑块计算旋转
         function updateAngle(event, ui) {
             var angleInDegrees = 360 - ui.value;
             var angleInRadians = angleInDegrees * Math.PI / 180;

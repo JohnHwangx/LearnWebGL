@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-2d-scale.html" target="_blank">WebGL 二维缩放</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -34,27 +35,27 @@ uniform vec2 u_rotation;
 uniform vec2 u_scale;
 
 void main() {
-  // Scale the positon
-  vec2 scaledPosition = a_position * u_scale;
+    // 缩放
+    vec2 scaledPosition = a_position * u_scale;
 
-  // Rotate the position
-  vec2 rotatedPosition = vec2(
-     scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x,
-     scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x);
+    // 旋转
+    vec2 rotatedPosition = vec2(
+        scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x,
+        scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x);
 
-  // Add in the translation.
-  vec2 position = rotatedPosition + u_translation;
+    // 平移
+    vec2 position = rotatedPosition + u_translation;
 
-  // convert the position from pixels to 0.0 to 1.0
-  vec2 zeroToOne = position / u_resolution;
+    // convert the position from pixels to 0.0 to 1.0
+    vec2 zeroToOne = position / u_resolution;
 
-  // convert from 0->1 to 0->2
-  vec2 zeroToTwo = zeroToOne * 2.0;
+    // convert from 0->1 to 0->2
+    vec2 zeroToTwo = zeroToOne * 2.0;
 
-  // convert from 0->2 to -1->+1 (clipspace)
-  vec2 clipSpace = zeroToTwo - 1.0;
+    // convert from 0->2 to -1->+1 (clipspace)
+    vec2 clipSpace = zeroToTwo - 1.0;
 
-  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
 }
 </script>
 <!-- fragment shader -->
@@ -64,7 +65,7 @@ precision mediump float;
 uniform vec4 u_color;
 
 void main() {
-   gl_FragColor = u_color;
+    gl_FragColor = u_color;
 }
 </script>
 <!--
@@ -144,7 +145,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             };
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene() {
             webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -178,19 +179,19 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // Set the translation.
+            // 设置平移
             gl.uniform2fv(translationLocation, translation);
 
-            // Set the rotation.
+            // 设置旋转
             gl.uniform2fv(rotationLocation, rotation);
 
-            // Set the scale.
+            // 设置缩放
             gl.uniform2fv(scaleLocation, scale);
 
-            // Draw the geometry.
+            // 绘制几何体
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
-            var count = 18;  // 6 triangles in the 'F', 3 points per triangle
+            var count = 18;  // 6 个三角形组成 'F', 每个三角形 3 个点
             gl.drawArrays(primitiveType, offset, count);
         }
     }

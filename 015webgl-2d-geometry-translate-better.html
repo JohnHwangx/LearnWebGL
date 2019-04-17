@@ -15,6 +15,7 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-2d-translation.html" target="_blank">WebGL 二维平移</a>
     <div class="description">
         Drag sliders to translate.
     </div>
@@ -34,10 +35,11 @@ uniform vec2 u_resolution;
 uniform vec2 u_translation;
 
 void main() {
-   // Add in the translation.
+   // 加上平移量
    vec2 position = a_position + u_translation;
+   // vec2 position = a_position;//如果不设置平移，进度条拖动无反应
 
-   // convert the position from pixels to 0.0 to 1.0
+   // 从像素坐标转换到 0.0 到 1.0
    vec2 zeroToOne = position / u_resolution;
 
    // convert from 0->1 to 0->2
@@ -92,9 +94,9 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         var colorLocation = gl.getUniformLocation(program, "u_color");
         var translationLocation = gl.getUniformLocation(program, "u_translation");
 
-        // Create a buffer to put positions in
+        // 创建一个存放位置信息的缓冲
         var positionBuffer = gl.createBuffer();
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+        // 绑定到 ARRAY_BUFFER (简单的理解为 ARRAY_BUFFER = positionBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         // Put geometry data into buffer
         setGeometry(gl);
@@ -115,7 +117,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             };
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene() {
             webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -149,10 +151,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // Set the translation.
+            // 设置平移
             gl.uniform2fv(translationLocation, translation);
 
-            // Draw the geometry.
+            // 绘制矩形
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 18;  // 6 triangles in the 'F', 3 points per triangle
@@ -160,12 +162,14 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         }
     }
 
-    // Fill the buffer with the values that define a letter 'F'.
+    // 在缓冲存储构成 'F' 的值
+    // 与上一个示例不同
+    // 这里只保留原始顶点，拖动滑块不对顶点做处理，而是将滑块的值传入着色器
     function setGeometry(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array([
-                // left column
+                // 左竖
                 0, 0,
                 30, 0,
                 0, 150,
@@ -173,7 +177,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 30, 0,
                 30, 150,
 
-                // top rung
+                // 上横
                 30, 0,
                 100, 0,
                 30, 30,
@@ -181,7 +185,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 100, 0,
                 100, 30,
 
-                // middle rung
+                // 中横
                 30, 60,
                 67, 60,
                 30, 90,

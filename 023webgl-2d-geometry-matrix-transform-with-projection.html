@@ -11,8 +11,9 @@
 
 <body>
     <div class="description">
-        Drag sliders to translate, rotate, and scale.
+        简化顶点着色器
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-2d-matrices.html" target="_blank">WebGL 二维矩阵</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -31,7 +32,7 @@ attribute vec2 a_position;
 uniform mat3 u_matrix;
 
 void main() {
-  // Multiply the position by the matrix.
+  // 使位置和矩阵相乘
   gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
 }
 </script>
@@ -117,7 +118,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             };
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene() {
             webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -148,13 +149,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // Compute the matrices
+            // 计算矩阵
             var projectionMatrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
             var translationMatrix = m3.translation(translation[0], translation[1]);
             var rotationMatrix = m3.rotation(angleInRadians);
             var scaleMatrix = m3.scaling(scale[0], scale[1]);
 
-            // Multiply the matrices.
+            // 矩阵相乘
             var matrix = m3.multiply(projectionMatrix, translationMatrix);
             matrix = m3.multiply(matrix, rotationMatrix);
             matrix = m3.multiply(matrix, scaleMatrix);
@@ -172,7 +173,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
     var m3 = {
         projection: function (width, height) {
-            // Note: This matrix flips the Y axis so that 0 is at the top.
+            // 注意：这个矩阵翻转了 Y 轴，所以 0 在上方
             return [
                 2 / width, 0, 0,
                 0, -2 / height, 0,

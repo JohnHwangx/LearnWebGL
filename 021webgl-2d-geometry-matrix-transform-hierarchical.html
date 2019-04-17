@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-2d-matrices.html" target="_blank">WebGL 二维矩阵</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -32,19 +33,19 @@ uniform vec2 u_resolution;
 uniform mat3 u_matrix;
 
 void main() {
-  // Multiply the position by the matrix.
-  vec2 position = (u_matrix * vec3(a_position, 1)).xy;
+    // Multiply the position by the matrix.
+    vec2 position = (u_matrix * vec3(a_position, 1)).xy;
 
-  // convert the position from pixels to 0.0 to 1.0
-  vec2 zeroToOne = position / u_resolution;
+    // convert the position from pixels to 0.0 to 1.0
+    vec2 zeroToOne = position / u_resolution;
 
-  // convert from 0->1 to 0->2
-  vec2 zeroToTwo = zeroToOne * 2.0;
+    // convert from 0->1 to 0->2
+    vec2 zeroToTwo = zeroToOne * 2.0;
 
-  // convert from 0->2 to -1->+1 (clipspace)
-  vec2 clipSpace = zeroToTwo - 1.0;
+    // convert from 0->2 to -1->+1 (clipspace)
+    vec2 clipSpace = zeroToTwo - 1.0;
 
-  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
 }
 </script>
 <!-- fragment shader -->
@@ -130,14 +131,14 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             };
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene() {
             webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-            // Clear the canvas.
+            // 清空画布
             gl.clear(gl.COLOR_BUFFER_BIT);
 
             // Tell it to use our program (pair of shaders)
@@ -164,24 +165,24 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // Compute the matrices
+            // 计算矩阵
             var translationMatrix = m3.translation(translation[0], translation[1]);
             var rotationMatrix = m3.rotation(angleInRadians);
             var scaleMatrix = m3.scaling(scale[0], scale[1]);
 
-            // Starting Matrix.
+            // 初始矩阵
             var matrix = m3.identity();
 
             for (var i = 0; i < 5; ++i) {
-                // Multiply the matrices.
+                // 矩阵相乘
                 matrix = m3.multiply(matrix, translationMatrix);
                 matrix = m3.multiply(matrix, rotationMatrix);
                 matrix = m3.multiply(matrix, scaleMatrix);
 
-                // Set the matrix.
+                // 设置矩阵
                 gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
-                // Draw the geometry.
+                // 绘制图形
                 var primitiveType = gl.TRIANGLES;
                 var offset = 0;
                 var count = 18;  // 6 triangles in the 'F', 3 points per triangle
