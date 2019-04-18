@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-orthographic.html" target="_blank">WebGL 三维正射投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -35,8 +36,8 @@ attribute vec4 a_position;
 uniform mat4 u_matrix;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // 将位置和矩阵相乘
+    gl_Position = u_matrix * a_position;
 }
 </script>
 <!-- fragment shader -->
@@ -155,19 +156,19 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Bind the position buffer.
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-            // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-            var size = 3;          // 3 components per iteration
-            var type = gl.FLOAT;   // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;        // start at the beginning of the buffer
+            // 告诉属性怎么从 positionBuffer (ARRAY_BUFFER) 中读取位置
+            var size = 3;          // 每次迭代使用 3 个单位的数据
+            var type = gl.FLOAT;   // 单位数据类型是32位的浮点型
+            var normalize = false; // 不需要归一化数据
+            var stride = 0;        // 0 = 移动距离 * 单位距离长度sizeof(type)  每次迭代跳多少距离到下一个数据
+            var offset = 0;        // 从绑定缓冲的起始处开始
             gl.vertexAttribPointer(
                 positionLocation, size, type, normalize, stride, offset);
 
             // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // Compute the matrices
+            // 计算矩阵
             var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
             matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
             matrix = m4.xRotate(matrix, rotation[0]);
@@ -175,7 +176,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             matrix = m4.zRotate(matrix, rotation[2]);
             matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
 
-            // Set the matrix.
+            // 设置矩阵
             gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
             // Draw the geometry.
@@ -189,7 +190,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     var m4 = {
 
         projection: function (width, height, depth) {
-            // Note: This matrix flips the Y axis so 0 is at the top.
+            // 注意：这个矩阵翻转了 Y 轴，所以 0 在上方
             return [
                 2 / width, 0, 0, 0,
                 0, -2 / height, 0, 0,
@@ -326,12 +327,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         },
 
     };
-    // Fill the buffer with the values that define a letter 'F'.
+    // 填充当前 ARRAY_BUFFER 缓冲
+    // 使用组成 'F' 的数据填充缓冲.
     function setGeometry(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array([
-                // left column
+                // 左竖
                 0, 0, 0,
                 30, 0, 0,
                 0, 150, 0,
@@ -339,7 +341,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 30, 0, 0,
                 30, 150, 0,
 
-                // top rung
+                // 上横
                 30, 0, 0,
                 100, 0, 0,
                 30, 30, 0,
@@ -347,7 +349,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 100, 0, 0,
                 100, 30, 0,
 
-                // middle rung
+                // 下横
                 30, 60, 0,
                 67, 60, 0,
                 30, 90, 0,

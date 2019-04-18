@@ -11,8 +11,9 @@
 
 <body>
     <div class="description">
-        Drag sliders to translate, rotate, and scale.
+        “剔除”背面三角形
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-orthographic.html" target="_blank">WebGL 三维正射投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -38,22 +39,22 @@ uniform mat4 u_matrix;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // 将位置和矩阵相乘.
+    gl_Position = u_matrix * a_position;
 
-  // Pass the color to the fragment shader.
-  v_color = a_color;
+    // 将颜色传递给片断着色器
+    v_color = a_color;
 }
 </script>
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed in from the vertex shader.
+// 从顶点着色器中传入
 varying vec4 v_color;
 
 void main() {
-   gl_FragColor = v_color;
+    gl_FragColor = v_color;
 }
 </script>
 <!--
@@ -94,11 +95,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Put geometry data into buffer
         setGeometry(gl);
 
-        // Create a buffer to put colors in
+        // 给颜色创建一个缓冲
         var colorBuffer = gl.createBuffer();
         // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = colorBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-        // Put geometry data into buffer
+        // 将颜色值传入缓冲
         setColors(gl);
 
         function radToDeg(r) {
@@ -177,18 +178,18 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.vertexAttribPointer(
                 positionLocation, size, type, normalize, stride, offset);
 
-            // Turn on the color attribute
+            // 启用颜色属性
             gl.enableVertexAttribArray(colorLocation);
 
-            // Bind the color buffer.
+            // 绑定颜色缓冲
             gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 
-            // Tell the attribute how to get data out of colorBuffer (ARRAY_BUFFER)
-            var size = 3;                 // 3 components per iteration
-            var type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
-            var normalize = true;         // normalize the data (convert from 0-255 to 0-1)
-            var stride = 0;               // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;               // start at the beginning of the buffer
+            // 告诉颜色属性怎么从 colorBuffer (ARRAY_BUFFER) 中读取颜色值
+            var size = 3;                 // 每次迭代使用3个单位的数据
+            var type = gl.UNSIGNED_BYTE;  // 单位数据类型是无符号 8 位整数
+            var normalize = true;         // 标准化数据 (从 0-255 转换到 0.0-1.0)
+            var stride = 0;               // 0 = 移动距离 * 单位距离长度sizeof(type)  每次迭代跳多少距离到下一个数据
+            var offset = 0;               // 从绑定缓冲的起始处开始
             gl.vertexAttribPointer(
                 colorLocation, size, type, normalize, stride, offset);
 
@@ -487,7 +488,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.STATIC_DRAW);
     }
 
-    // Fill the buffer with colors for the 'F'.
+    // 向缓冲传入 'F' 的颜色值
     function setColors(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,

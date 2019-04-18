@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-orthographic.html" target="_blank">WebGL 三维正射投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -35,8 +36,8 @@ attribute vec4 a_position;
 uniform mat4 u_matrix;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // Multiply the position by the matrix.
+    gl_Position = u_matrix * a_position;
 }
 </script>
 <!-- fragment shader -->
@@ -46,7 +47,7 @@ precision mediump float;
 uniform vec4 u_color;
 
 void main() {
-   gl_FragColor = u_color;
+    gl_FragColor = u_color;
 }
 </script>
 <!--
@@ -178,7 +179,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Set the matrix.
             gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-            // Draw the geometry.
+            // 绘制几何体
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 16 * 6;
