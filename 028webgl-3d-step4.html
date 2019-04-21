@@ -11,7 +11,7 @@
 
 <body>
     <div class="description">
-        Drag sliders to translate, rotate, and scale.
+        开启 CULL_FACE 后
     </div>
     <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-orthographic.html" target="_blank">WebGL 三维正射投影</a>
     <canvas id="canvas"></canvas>
@@ -159,9 +159,8 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
             // Clear the canvas.
             gl.clear(gl.COLOR_BUFFER_BIT);
-
-            // Turn on culling. By default backfacing triangles
-            // will be culled.
+            
+            // 开启“剔除”，背面的三角形将被默认剔除
             gl.enable(gl.CULL_FACE);
 
             // Tell it to use our program (pair of shaders)

@@ -13,6 +13,7 @@
     <div class="description">
         Drag slider to rotate F.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-lighting-directional.html" target="_blank">WebGL 三维方向光源</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -30,36 +31,34 @@ uniform mat4 u_matrix;
 varying vec3 v_normal;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // 将位置和矩阵相乘
+    gl_Position = u_matrix * a_position;
 
-  // Pass the normal to the fragment shader
-  v_normal = a_normal;
+    // 将法向量传到片断着色器
+    v_normal = a_normal;
 }
 </script>
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed in from the vertex shader.
+// 从顶点着色器中传入的值
 varying vec3 v_normal;
 
 uniform vec3 u_reverseLightDirection;
 uniform vec4 u_color;
 
 void main() {
-  // because v_normal is a varying it's interpolated
-  // we it will not be a uint vector. Normalizing it
-  // will make it a unit vector again
-  vec3 normal = normalize(v_normal);
+    // 由于 v_normal 是插值出来的，和有可能不是单位向量，
+    // 可以用 normalize 将其单位化。
+    vec3 normal = normalize(v_normal);
 
-  float light = dot(normal, u_reverseLightDirection);
+    float light = dot(normal, u_reverseLightDirection);
 
-  gl_FragColor = u_color;
+    gl_FragColor = u_color;
 
-  // Lets multiply just the color portion (not the alpha)
-  // by the light
-  gl_FragColor.rgb *= light;
+    // 将颜色部分（不包括 alpha）和 光照相乘
+    gl_FragColor.rgb *= light;
 }
 </script>
 <!--
@@ -87,11 +86,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // setup GLSL program
         var program = webglUtils.createProgramFromScripts(gl, ["3d-vertex-shader", "3d-fragment-shader"]);
 
-        // look up where the vertex data needs to go.
+        // 找顶点着色器中的属性
         var positionLocation = gl.getAttribLocation(program, "a_position");
         var normalLocation = gl.getAttribLocation(program, "a_normal");
 
-        // lookup uniforms
+        // 寻找全局变量
         var matrixLocation = gl.getUniformLocation(program, "u_matrix");
         var colorLocation = gl.getUniformLocation(program, "u_color");
         var reverseLightDirectionLocation =
@@ -104,11 +103,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Put geometry data into buffer
         setGeometry(gl);
 
-        // Create a buffer to put normals in
+        // 创建缓冲存储法向量
         var normalBuffer = gl.createBuffer();
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = normalBuffer)
+        // 绑定到 ARRAY_BUFFER (可以看作 ARRAY_BUFFER = normalBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-        // Put normals data into buffer
+        // 将法向量存入缓冲
         setNormals(gl);
 
         function radToDeg(r) {
@@ -167,18 +166,18 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.vertexAttribPointer(
                 positionLocation, size, type, normalize, stride, offset);
 
-            // Turn on the normal attribute
+            // 启用法向量属性
             gl.enableVertexAttribArray(normalLocation);
 
-            // Bind the normal buffer.
+            // 绑定法向量缓冲
             gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 
-            // Tell the attribute how to get data out of normalBuffer (ARRAY_BUFFER)
-            var size = 3;          // 3 components per iteration
-            var type = gl.FLOAT;   // the data is 32bit floating point values
-            var normalize = false; // normalize the data (convert from 0-255 to 0-1)
-            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;        // start at the beginning of the buffer
+            // 告诉法向量属性怎么从 normalBuffer (ARRAY_BUFFER) 中读取值
+            var size = 3;          // 每次迭代使用3个单位的数据
+            var type = gl.FLOAT;   // 单位数据类型是 32 位浮点型
+            var normalize = false; // 单位化 (从 0-255 转换到 0-1)
+            var stride = 0;        // 0 = 移动距离 * 单位距离长度sizeof(type)  每次迭代跳多少距离到下一个数据
+            var offset = 0;        // 从绑定缓冲的起始处开始
             gl.vertexAttribPointer(
                 normalLocation, size, type, normalize, stride, offset);
 
@@ -206,13 +205,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Multiply the matrices.
             var worldViewProjectionMatrix = m4.multiply(viewProjectionMatrix, worldMatrix);
 
-            // Set the matrix.
+            // 设置矩阵
             gl.uniformMatrix4fv(matrixLocation, false, worldViewProjectionMatrix);
 
-            // Set the color to use
+            // 设置使用的颜色
             gl.uniform4fv(colorLocation, [0.2, 1, 0.2, 1]); // green
 
-            // set the light direction.
+            // 设置光线方向
             gl.uniform3fv(reverseLightDirectionLocation, m4.normalize([0.5, 0.7, 1]));
 
             // Draw the geometry.
@@ -376,7 +375,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
     function setNormals(gl) {
         var normals = new Float32Array([
-            // left column front
+            // 正面左竖
             0, 0, 1,
             0, 0, 1,
             0, 0, 1,
@@ -384,7 +383,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 0, 1,
             0, 0, 1,
 
-            // top rung front
+            // 正面上横
             0, 0, 1,
             0, 0, 1,
             0, 0, 1,
@@ -392,7 +391,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 0, 1,
             0, 0, 1,
 
-            // middle rung front
+            // 正面中横
             0, 0, 1,
             0, 0, 1,
             0, 0, 1,
@@ -400,7 +399,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 0, 1,
             0, 0, 1,
 
-            // left column back
+            // 背面左竖
             0, 0, -1,
             0, 0, -1,
             0, 0, -1,
@@ -408,7 +407,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 0, -1,
             0, 0, -1,
 
-            // top rung back
+            // 背面上横
             0, 0, -1,
             0, 0, -1,
             0, 0, -1,
@@ -416,7 +415,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 0, -1,
             0, 0, -1,
 
-            // middle rung back
+            // 背面中横
             0, 0, -1,
             0, 0, -1,
             0, 0, -1,
@@ -424,7 +423,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 0, -1,
             0, 0, -1,
 
-            // top
+            // 顶部
             0, 1, 0,
             0, 1, 0,
             0, 1, 0,
@@ -432,7 +431,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 1, 0,
             0, 1, 0,
 
-            // top rung right
+            // 上横右面
             1, 0, 0,
             1, 0, 0,
             1, 0, 0,
@@ -440,7 +439,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             1, 0, 0,
             1, 0, 0,
 
-            // under top rung
+            // 上横下面
             0, -1, 0,
             0, -1, 0,
             0, -1, 0,
@@ -448,7 +447,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, -1, 0,
             0, -1, 0,
 
-            // between top rung and middle
+            // 上横和中横之间
             1, 0, 0,
             1, 0, 0,
             1, 0, 0,
@@ -456,7 +455,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             1, 0, 0,
             1, 0, 0,
 
-            // top of middle rung
+            // 中横上面
             0, 1, 0,
             0, 1, 0,
             0, 1, 0,
@@ -464,7 +463,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, 1, 0,
             0, 1, 0,
 
-            // right of middle rung
+            // 中横右面
             1, 0, 0,
             1, 0, 0,
             1, 0, 0,
@@ -472,7 +471,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             1, 0, 0,
             1, 0, 0,
 
-            // bottom of middle rung.
+            // 中横底面
             0, -1, 0,
             0, -1, 0,
             0, -1, 0,
@@ -480,7 +479,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, -1, 0,
             0, -1, 0,
 
-            // right of bottom
+            // 底部右侧
             1, 0, 0,
             1, 0, 0,
             1, 0, 0,
@@ -488,7 +487,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             1, 0, 0,
             1, 0, 0,
 
-            // bottom
+            // 底面
             0, -1, 0,
             0, -1, 0,
             0, -1, 0,
@@ -496,7 +495,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             0, -1, 0,
             0, -1, 0,
 
-            // left side
+            // 左面
             -1, 0, 0,
             -1, 0, 0,
             -1, 0, 0,

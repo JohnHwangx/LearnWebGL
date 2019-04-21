@@ -13,6 +13,7 @@
     <div class="description">
         Drag slider to rotate F.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-lighting-directional.html" target="_blank">WebGL 三维方向光源</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -31,11 +32,11 @@ uniform mat4 u_world;
 varying vec3 v_normal;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_worldViewProjection * a_position;
+    // 将位置和矩阵相乘
+    gl_Position = u_worldViewProjection * a_position;
 
-  // orient the normals and pass to the fragment shader
-  v_normal = mat3(u_world) * a_normal;
+    // 重定向法向量并传递给片断着色器
+    v_normal = mat3(u_world) * a_normal;
 }
 </script>
 <!-- fragment shader -->
@@ -49,18 +50,18 @@ uniform vec3 u_reverseLightDirection;
 uniform vec4 u_color;
 
 void main() {
-  // because v_normal is a varying it's interpolated
-  // we it will not be a uint vector. Normalizing it
-  // will make it a unit vector again
-  vec3 normal = normalize(v_normal);
+    // because v_normal is a varying it's interpolated
+    // we it will not be a uint vector. Normalizing it
+    // will make it a unit vector again
+    vec3 normal = normalize(v_normal);
 
-  float light = dot(normal, u_reverseLightDirection);
+    float light = dot(normal, u_reverseLightDirection);
 
-  gl_FragColor = u_color;
+    gl_FragColor = u_color;
 
-  // Lets multiply just the color portion (not the alpha)
-  // by the light
-  gl_FragColor.rgb *= light;
+    // Lets multiply just the color portion (not the alpha)
+    // by the light
+    gl_FragColor.rgb *= light;
 }
 </script>
 <!--
@@ -92,7 +93,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         var positionLocation = gl.getAttribLocation(program, "a_position");
         var normalLocation = gl.getAttribLocation(program, "a_normal");
 
-        // lookup uniforms
+        // 寻找全局变量
         var worldViewProjectionLocation = gl.getUniformLocation(program, "u_worldViewProjection");
         var worldLocation = gl.getUniformLocation(program, "u_world");
         var colorLocation = gl.getUniformLocation(program, "u_color");
@@ -208,7 +209,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Multiply the matrices.
             var worldViewProjectionMatrix = m4.multiply(viewProjectionMatrix, worldMatrix);
 
-            // Set the matrices
+            // 设置矩阵
             gl.uniformMatrix4fv(worldViewProjectionLocation, false, worldViewProjectionMatrix);
             gl.uniformMatrix4fv(worldLocation, false, worldMatrix);
 

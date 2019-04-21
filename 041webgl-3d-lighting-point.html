@@ -13,6 +13,7 @@
     <div class="description">
         Drag slider to rotate F.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-lighting-point.html" target="_blank">WebGL 三维点光源</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -36,45 +37,43 @@ varying vec3 v_normal;
 varying vec3 v_surfaceToLight;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_worldViewProjection * a_position;
+    // 将位置和矩阵相乘
+    gl_Position = u_worldViewProjection * a_position;
 
-  // orient the normals and pass to the fragment shader
-  v_normal = mat3(u_worldInverseTranspose) * a_normal;
+    // 重定向法向量并传递给片断着色器
+    v_normal = mat3(u_worldInverseTranspose) * a_normal;
 
-  // compute the world position of the surfoace
-  vec3 surfaceWorldPosition = (u_world * a_position).xyz;
+    // 计算表面的世界坐标
+    vec3 surfaceWorldPosition = (u_world * a_position).xyz;
 
-  // compute the vector of the surface to the light
-  // and pass it to the fragment shader
-  v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+    // 计算表面到光源的方向
+    // 传递给片断着色器
+    v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
 }
 </script>
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed in from the vertex shader.
+// 从顶点着色器中传入的值
 varying vec3 v_normal;
 varying vec3 v_surfaceToLight;
 
 uniform vec4 u_color;
 
 void main() {
-  // because v_normal is a varying it's interpolated
-  // we it will not be a uint vector. Normalizing it
-  // will make it a unit vector again
-  vec3 normal = normalize(v_normal);
+    // 由于 v_normal 是可变量，所以经过插值后不再是单位向量，
+    // 单位化后会成为单位向量
+    vec3 normal = normalize(v_normal);
 
-  vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+    vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
 
-  float light = dot(normal, surfaceToLightDirection);
+    float light = dot(normal, surfaceToLightDirection);
 
-  gl_FragColor = u_color;
+    gl_FragColor = u_color;
 
-  // Lets multiply just the color portion (not the alpha)
-  // by the light
-  gl_FragColor.rgb *= light;
+    // 只将颜色部分（不包含 alpha） 和光照相乘
+    gl_FragColor.rgb *= light;
 }
 </script>
 <!--
@@ -226,7 +225,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var worldInverseMatrix = m4.inverse(worldMatrix);
             var worldInverseTransposeMatrix = m4.transpose(worldInverseMatrix);
 
-            // Set the matrices
+            // 设置矩阵
             gl.uniformMatrix4fv(worldViewProjectionLocation, false, worldViewProjectionMatrix);
             gl.uniformMatrix4fv(worldInverseTransposeLocation, false, worldInverseTransposeMatrix);
             gl.uniformMatrix4fv(worldLocation, false, worldMatrix);

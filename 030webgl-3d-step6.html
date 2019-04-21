@@ -11,8 +11,9 @@
 
 <body>
     <div class="description">
-        Drag sliders to translate, rotate, and scale.
+        开启深度缓冲
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-orthographic.html" target="_blank">WebGL 三维正射投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -149,21 +150,21 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             };
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene() {
             webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-            // Clear the canvas.
+            // 清空画布和深度缓冲
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
             // Turn on culling. By default backfacing triangles
             // will be culled.
             gl.enable(gl.CULL_FACE);
 
-            // Enable the depth buffer
+            // 开启深度缓冲
             gl.enable(gl.DEPTH_TEST);
 
             // Tell it to use our program (pair of shaders)

@@ -13,6 +13,7 @@
     <div class="description">
         Uses a few utility functions so there's much less code.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-less-code-more-fun.html" target="_blank">WebGL 码少趣多</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -34,12 +35,12 @@ varying vec3 v_surfaceToLight;
 varying vec3 v_surfaceToView;
 
 void main() {
-  v_texCoord = a_texcoord;
-  v_position = (u_worldViewProjection * a_position);
-  v_normal = (u_worldInverseTranspose * vec4(a_normal, 0)).xyz;
-  v_surfaceToLight = u_lightWorldPos - (u_world * a_position).xyz;
-  v_surfaceToView = (u_viewInverse[3] - (u_world * a_position)).xyz;
-  gl_Position = v_position;
+    v_texCoord = a_texcoord;
+    v_position = (u_worldViewProjection * a_position);
+    v_normal = (u_worldInverseTranspose * vec4(a_normal, 0)).xyz;
+    v_surfaceToLight = u_lightWorldPos - (u_world * a_position).xyz;
+    v_surfaceToView = (u_viewInverse[3] - (u_world * a_position)).xyz;
+    gl_Position = v_position;
 }
 </script>
 <!-- fragment shader -->
@@ -60,26 +61,26 @@ uniform float u_shininess;
 uniform float u_specularFactor;
 
 vec4 lit(float l ,float h, float m) {
-  return vec4(1.0,
-              abs(l),
-              (l > 0.0) ? pow(max(0.0, h), m) : 0.0,
-              1.0);
+    return vec4(1.0,
+                abs(l),
+                (l > 0.0) ? pow(max(0.0, h), m) : 0.0,
+                1.0);
 }
 
 void main() {
-  vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
-  vec3 a_normal = normalize(v_normal);
-  vec3 surfaceToLight = normalize(v_surfaceToLight);
-  vec3 surfaceToView = normalize(v_surfaceToView);
-  vec3 halfVector = normalize(surfaceToLight + surfaceToView);
-  vec4 litR = lit(dot(a_normal, surfaceToLight),
-                    dot(a_normal, halfVector), u_shininess);
-  vec4 outColor = vec4((
-  u_lightColor * (diffuseColor * litR.y * u_colorMult +
-                u_specular * litR.z * u_specularFactor)).rgb,
-      diffuseColor.a);
-  gl_FragColor = outColor;
-//  gl_FragColor = vec4(litR.yyy, 1);
+    vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
+    vec3 a_normal = normalize(v_normal);
+    vec3 surfaceToLight = normalize(v_surfaceToLight);
+    vec3 surfaceToView = normalize(v_surfaceToView);
+    vec3 halfVector = normalize(surfaceToLight + surfaceToView);
+    vec4 litR = lit(dot(a_normal, surfaceToLight),
+                        dot(a_normal, halfVector), u_shininess);
+    vec4 outColor = vec4((
+    u_lightColor * (diffuseColor * litR.y * u_colorMult +
+                    u_specular * litR.z * u_specularFactor)).rgb,
+        diffuseColor.a);
+    gl_FragColor = outColor;
+    //  gl_FragColor = vec4(litR.yyy, 1);
 }
 </script>
 <!--
@@ -110,6 +111,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
         // setup GLSL program
         var program = webglUtils.createProgramFromScripts(gl, ["3d-vertex-shader", "3d-fragment-shader"]);
+        // 初始化时
         var uniformSetters = webglUtils.createUniformSetters(gl, program);
         var attribSetters = webglUtils.createAttributeSetters(gl, program);
 
@@ -127,12 +129,14 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         var fieldOfViewRadians = degToRad(60);
         var cameraHeight = 50;
 
+        // 初始化或渲染时需要的全局变量
         var uniformsThatAreTheSameForAllObjects = {
             u_lightWorldPos: [-50, 30, 100],
             u_viewInverse: m4.identity(),
             u_lightColor: [1, 1, 1, 1],
         };
 
+        // 初始化或或绘制时需要的全局变量值
         var uniformsThatAreComputedForEachObject = {
             u_worldViewProjection: m4.identity(),
             u_world: m4.identity(),
@@ -208,15 +212,16 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
             var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
+            // 绘制时
             gl.useProgram(program);
 
-            // Setup all the needed attributes.
+            // 设置所有的缓冲和属性
             webglUtils.setAttributes(attribSetters, attribs);
 
             // Bind the indices.
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
 
-            // Set the uniforms that are the same for all objects.
+            // 设置所有对象公共部分的参数
             webglUtils.setUniforms(uniformSetters, uniformsThatAreTheSameForAllObjects);
 
             // Draw objects

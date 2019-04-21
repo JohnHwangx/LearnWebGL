@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-perspective.html" target="_blank">WebGL 三维透视投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -36,7 +37,7 @@ uniform mat4 u_matrix;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
+  // 位置和矩阵相乘
   gl_Position = u_matrix * a_position;
 
   // Pass the color to the fragment shader.
@@ -204,7 +205,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.vertexAttribPointer(
                 colorLocation, size, type, normalize, stride, offset);
 
-            // Compute the matrices
+            // 计算矩阵
             var matrix = makeZToWMatrix(fudgeFactor);
             matrix = m4.multiply(matrix, m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400));
             matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
@@ -223,7 +224,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.drawArrays(primitiveType, offset, count);
         }
     }
-
+    // 接下来定义一个方法实现 Z → W 的矩阵
     function makeZToWMatrix(fudgeFactor) {
         return [
             1, 0, 0, 0,

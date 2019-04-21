@@ -13,6 +13,7 @@
     <div class="description">
         Uses a few utility functions so there's much less code.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-less-code-more-fun.html" target="_blank">WebGL 码少趣多</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -67,19 +68,19 @@ vec4 lit(float l ,float h, float m) {
 }
 
 void main() {
-  vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
-  vec3 a_normal = normalize(v_normal);
-  vec3 surfaceToLight = normalize(v_surfaceToLight);
-  vec3 surfaceToView = normalize(v_surfaceToView);
-  vec3 halfVector = normalize(surfaceToLight + surfaceToView);
-  vec4 litR = lit(dot(a_normal, surfaceToLight),
-                    dot(a_normal, halfVector), u_shininess);
-  vec4 outColor = vec4((
-  u_lightColor * (diffuseColor * litR.y * u_colorMult +
-                u_specular * litR.z * u_specularFactor)).rgb,
-      diffuseColor.a);
-  gl_FragColor = outColor;
-//  gl_FragColor = vec4(litR.yyy, 1);
+    vec4 diffuseColor = texture2D(u_diffuse, v_texCoord);
+    vec3 a_normal = normalize(v_normal);
+    vec3 surfaceToLight = normalize(v_surfaceToLight);
+    vec3 surfaceToView = normalize(v_surfaceToView);
+    vec3 halfVector = normalize(surfaceToLight + surfaceToView);
+    vec4 litR = lit(dot(a_normal, surfaceToLight),
+                        dot(a_normal, halfVector), u_shininess);
+    vec4 outColor = vec4((
+    u_lightColor * (diffuseColor * litR.y * u_colorMult +
+                    u_specular * litR.z * u_specularFactor)).rgb,
+        diffuseColor.a);
+    gl_FragColor = outColor;
+    //  gl_FragColor = vec4(litR.yyy, 1);
 }
 </script>
 <!--
@@ -108,7 +109,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
         gl.enable(gl.DEPTH_TEST);
 
-        // a single triangle
+        // 一个三角形
         var arrays = {
             position: { numComponents: 3, data: [0, -10, 0, 10, 10, 0, -10, 10, 0], },
             texcoord: { numComponents: 2, data: [0.5, 0, 1, 1, 0, 1], },
@@ -210,7 +211,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
             gl.useProgram(program);
 
-            // Setup all the needed attributes.
+            // 设置所有需要的缓冲和属性
             webglUtils.setBuffersAndAttributes(gl, attribSetters, bufferInfo);
 
             // Set the uniforms that are the same for all objects.
@@ -235,7 +236,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 // Set the uniforms that are specific to the this object.
                 webglUtils.setUniforms(uniformSetters, object.materialUniforms);
 
-                // Draw the geometry.
+                // 绘制几何体
                 gl.drawArrays(gl.TRIANGLES, 0, bufferInfo.numElements);
             });
 

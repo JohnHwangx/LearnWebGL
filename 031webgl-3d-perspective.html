@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-perspective.html" target="_blank">WebGL 三维透视投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -37,17 +38,18 @@ uniform float u_fudgeFactor;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
-  vec4 position = u_matrix * a_position;
+    // 将位置和矩阵相乘
+    vec4 position = u_matrix * a_position;
 
-  // Adjust the z to divide by
-  float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
+    // 调整除数
+    // 由于裁减空间中的 Z 值是 -1 到 +1 的，所以 +1 是为了让 zToDivideBy 变成 0 到 +2 * fudgeFactor
+    float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
 
-  // Divide x and y by z.
-  gl_Position = vec4(position.xy / zToDivideBy, position.zw);
+    // x 和 y 除以调整后的除数
+    gl_Position = vec4(position.xy / zToDivideBy, position.zw);
 
-  // Pass the color to the fragment shader.
-  v_color = a_color;
+    // Pass the color to the fragment shader.
+    v_color = a_color;
 }
 </script>
 <!-- fragment shader -->
@@ -223,10 +225,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Set the matrix.
             gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-            // Set the fudgeFactor
+            // 设置 fudgeFactor
             gl.uniform1f(fudgeLocation, fudgeFactor);
 
-            // Draw the geometry.
+            // 绘制几何体
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 16 * 6;

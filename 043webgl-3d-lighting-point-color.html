@@ -13,6 +13,7 @@
     <div class="description">
         Drag slider to rotate F.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-lighting-point.html" target="_blank">WebGL 三维点光源</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -39,22 +40,22 @@ varying vec3 v_surfaceToLight;
 varying vec3 v_surfaceToView;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_worldViewProjection * a_position;
+    // Multiply the position by the matrix.
+    gl_Position = u_worldViewProjection * a_position;
 
-  // orient the normals and pass to the fragment shader
-  v_normal = mat3(u_worldInverseTranspose) * a_normal;
+    // orient the normals and pass to the fragment shader
+    v_normal = mat3(u_worldInverseTranspose) * a_normal;
 
-  // compute the world position of the surfoace
-  vec3 surfaceWorldPosition = (u_world * a_position).xyz;
+    // compute the world position of the surfoace
+    vec3 surfaceWorldPosition = (u_world * a_position).xyz;
 
-  // compute the vector of the surface to the light
-  // and pass it to the fragment shader
-  v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+    // compute the vector of the surface to the light
+    // and pass it to the fragment shader
+    v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
 
-  // compute the vector of the surface to the view/camera
-  // and pass it to the fragment shader
-  v_surfaceToView = normalize(u_viewWorldPosition - surfaceWorldPosition);
+    // compute the vector of the surface to the view/camera
+    // and pass it to the fragment shader
+    v_surfaceToView = normalize(u_viewWorldPosition - surfaceWorldPosition);
 }
 </script>
 <!-- fragment shader -->
@@ -72,29 +73,28 @@ uniform vec3 u_lightColor;
 uniform vec3 u_specularColor;
 
 void main() {
-  // because v_normal is a varying it's interpolated
-  // we it will not be a uint vector. Normalizing it
-  // will make it a unit vector again
-  vec3 normal = normalize(v_normal);
+    // because v_normal is a varying it's interpolated
+    // we it will not be a uint vector. Normalizing it
+    // will make it a unit vector again
+    vec3 normal = normalize(v_normal);
 
-  vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
-  vec3 surfaceToViewDirection = normalize(v_surfaceToView);
-  vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
+    vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+    vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+    vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
-  float light = dot(normal, surfaceToLightDirection);
-  float specular = 0.0;
-  if (light > 0.0) {
-    specular = pow(dot(normal, halfVector), u_shininess);
-  }
+    float light = dot(normal, surfaceToLightDirection);
+    float specular = 0.0;
+    if (light > 0.0) {
+        specular = pow(dot(normal, halfVector), u_shininess);
+    }
 
-  gl_FragColor = u_color;
+    gl_FragColor = u_color;
 
-  // Lets multiply just the color portion (not the alpha)
-  // by the light
-  gl_FragColor.rgb *= light * u_lightColor;
+    // 只将颜色部分（不包含 alpha） 和光照相乘
+    gl_FragColor.rgb *= light * u_lightColor;
 
-  // Just add in the specular
-  gl_FragColor.rgb += specular * u_specularColor;
+    // 直接和高光相加
+    gl_FragColor.rgb += specular * u_specularColor;
 }
 </script>
 <!--
@@ -277,10 +277,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // set the shininess
             gl.uniform1f(shininessLocation, shininess);
 
-            // set the light color
+            // 设置光照颜色
             gl.uniform3fv(lightColorLocation, m4.normalize([1, 0.6, 0.6]));  // red light
 
-            // set the specular color
+            // 设置高光颜色
             gl.uniform3fv(specularColorLocation, m4.normalize([1, 0.2, 0.2]));  // red light
 
             // Draw the geometry.

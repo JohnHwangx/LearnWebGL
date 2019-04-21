@@ -13,6 +13,7 @@
     <div class="description">
         Drag sliders to translate, rotate, and scale.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-perspective.html" target="_blank">WebGL 三维透视投影</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -37,17 +38,17 @@ uniform float u_fudgeFactor;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
-  vec4 position = u_matrix * a_position;
+    // 将位置和矩阵相乘
+    vec4 position = u_matrix * a_position;
 
-  // Adjust the z to divide by
-  float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
+    // 调整除数
+    float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
 
-  // Divide x and y by z.
-  gl_Position = vec4(position.xyz, zToDivideBy);
+    // 将 x y z 除以 zToDivideBy
+    gl_Position = vec4(position.xyz, zToDivideBy);
 
-  // Pass the color to the fragment shader.
-  v_color = a_color;
+    // 传递颜色到给片断着色器
+    v_color = a_color;
 }
 </script>
 <!-- fragment shader -->
@@ -58,7 +59,7 @@ precision mediump float;
 varying vec4 v_color;
 
 void main() {
-   gl_FragColor = v_color;
+    gl_FragColor = v_color;
 }
 </script>
 <!--

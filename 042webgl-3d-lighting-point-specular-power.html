@@ -13,6 +13,7 @@
     <div class="description">
         Drag slider to rotate F.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-lighting-point.html" target="_blank">WebGL 三维点光源</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -39,29 +40,29 @@ varying vec3 v_surfaceToLight;
 varying vec3 v_surfaceToView;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_worldViewProjection * a_position;
+    // 将位置和矩阵相乘
+    gl_Position = u_worldViewProjection * a_position;
 
-  // orient the normals and pass to the fragment shader
-  v_normal = mat3(u_worldInverseTranspose) * a_normal;
+    // 重定向法向量并传递到片断着色器
+    v_normal = mat3(u_worldInverseTranspose) * a_normal;
 
-  // compute the world position of the surfoace
-  vec3 surfaceWorldPosition = (u_world * a_position).xyz;
+    // 重定向法向量并传递到片断着色器
+    vec3 surfaceWorldPosition = (u_world * a_position).xyz;
 
-  // compute the vector of the surface to the light
-  // and pass it to the fragment shader
-  v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
+    // 计算表面到光源的方向
+    // 然后传递到片断着色器
+    v_surfaceToLight = u_lightWorldPosition - surfaceWorldPosition;
 
-  // compute the vector of the surface to the view/camera
-  // and pass it to the fragment shader
-  v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
+    // 计算表面到相机的方向
+    // 然后传递到片断着色器
+    v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;
 }
 </script>
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed in from the vertex shader.
+// 从顶点着色器中传入的值
 varying vec3 v_normal;
 varying vec3 v_surfaceToLight;
 varying vec3 v_surfaceToView;
@@ -70,29 +71,27 @@ uniform vec4 u_color;
 uniform float u_shininess;
 
 void main() {
-  // because v_normal is a varying it's interpolated
-  // we it will not be a uint vector. Normalizing it
-  // will make it a unit vector again
-  vec3 normal = normalize(v_normal);
+    // 由于 v_normal 是可变量，所以经过插值后不再是单位向量，
+    // 单位化后会成为单位向量
+    vec3 normal = normalize(v_normal);
 
-  vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
-  vec3 surfaceToViewDirection = normalize(v_surfaceToView);
-  vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
+    vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+    vec3 surfaceToViewDirection = normalize(v_surfaceToView);
+    vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);
 
-  float light = dot(normal, surfaceToLightDirection);
-  float specular = 0.0;
-  if (light > 0.0) {
-    specular = pow(dot(normal, halfVector), u_shininess);
-  }
+    float light = dot(normal, surfaceToLightDirection);
+    float specular = 0.0;
+    if (light > 0.0) {
+        specular = pow(dot(normal, halfVector), u_shininess);
+    }
 
-  gl_FragColor = u_color;
+    gl_FragColor = u_color;
 
-  // Lets multiply just the color portion (not the alpha)
-  // by the light
-  gl_FragColor.rgb *= light;
+    // 只将颜色部分（不包含 alpha） 和光照相乘
+    gl_FragColor.rgb *= light;
 
-  // Just add in the specular
-  gl_FragColor.rgb += specular;
+    // 直接加上高光
+    gl_FragColor.rgb += specular;
 }
 </script>
 <!--
@@ -234,7 +233,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var zFar = 2000;
             var projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
 
-            // Compute the camera's matrix
+            // 计算相机矩阵
             var camera = [100, 150, 200];
             var target = [0, 35, 0];
             var up = [0, 1, 0];
@@ -265,10 +264,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // set the light position
             gl.uniform3fv(lightWorldPositionLocation, [20, 30, 60]);
 
-            // set the camera/view position
+            // 设置相机位置
             gl.uniform3fv(viewWorldPositionLocation, camera);
 
-            // set the shininess
+            // 设置亮度
             gl.uniform1f(shininessLocation, shininess);
 
             // Draw the geometry.
