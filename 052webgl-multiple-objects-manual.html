@@ -13,6 +13,7 @@
     <div class="description">
         Draw multiple objects manually
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-drawing-multiple-things.html" target="_blank">WebGL 绘制多个物体</a>
     <canvas id="canvas"></canvas>
 </body>
 <!--
@@ -35,24 +36,24 @@ uniform mat4 u_matrix;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // Multiply the position by the matrix.
+    gl_Position = u_matrix * a_position;
 
-  // Pass the color to the fragment shader.
-  v_color = a_color;
+    // Pass the color to the fragment shader.
+    v_color = a_color;
 }
 </script>
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed in from the vertex shader.
+// 从顶点着色器中传入的值
 varying vec4 v_color;
 
 uniform vec4 u_colorMult;
 
 void main() {
-   gl_FragColor = v_color * u_colorMult;
+    gl_FragColor = v_color * u_colorMult;
 }
 </script>
 <script>
@@ -96,7 +97,7 @@ void main() {
         var fieldOfViewRadians = degToRad(60);
         var cameraHeight = 50;
 
-        // Uniforms for each object.
+        // 每个物体需要的全局变量
         var sphereUniforms = {
             u_colorMult: [0.5, 1, 0.5, 1],
             u_matrix: m4.identity(),
@@ -109,6 +110,8 @@ void main() {
             u_colorMult: [0.5, 0.5, 1, 1],
             u_matrix: m4.identity(),
         };
+
+        // 每个物体的平移量
         var sphereTranslation = [0, 0, 0];
         var cubeTranslation = [-40, 0, 0];
         var coneTranslation = [40, 0, 0];
@@ -162,11 +165,11 @@ void main() {
             var coneXRotation = time;
             var coneYRotation = -time;
 
-            // ------ Draw the sphere --------
+            // ------ 绘制球体 --------
 
             gl.useProgram(programInfo.program);
 
-            // Setup all the needed attributes.
+            // 设置所需的属性变量
             webglUtils.setBuffersAndAttributes(gl, programInfo, sphereBufferInfo);
 
             sphereUniforms.u_matrix = computeMatrix(
@@ -175,14 +178,14 @@ void main() {
                 sphereXRotation,
                 sphereYRotation);
 
-            // Set the uniforms we just computed
+            // 设置刚才计算出的全局变量
             webglUtils.setUniforms(programInfo, sphereUniforms);
 
             gl.drawArrays(gl.TRIANGLES, 0, sphereBufferInfo.numElements);
 
-            // ------ Draw the cube --------
+            // ------ 绘制立方体 --------
 
-            // Setup all the needed attributes.
+            // 设置所需的属性变量
             webglUtils.setBuffersAndAttributes(gl, programInfo, cubeBufferInfo);
 
             cubeUniforms.u_matrix = computeMatrix(
@@ -191,14 +194,14 @@ void main() {
                 cubeXRotation,
                 cubeYRotation);
 
-            // Set the uniforms we just computed
+            // 设置刚才计算出的全局变量
             webglUtils.setUniforms(programInfo, cubeUniforms);
 
             gl.drawArrays(gl.TRIANGLES, 0, cubeBufferInfo.numElements);
 
-            // ------ Draw the cone --------
+            // ------ 绘制椎体 --------
 
-            // Setup all the needed attributes.
+            // 设置所需的属性变量
             webglUtils.setBuffersAndAttributes(gl, programInfo, coneBufferInfo);
 
             coneUniforms.u_matrix = computeMatrix(
@@ -207,7 +210,7 @@ void main() {
                 coneXRotation,
                 coneYRotation);
 
-            // Set the uniforms we just computed
+            // 设置刚才计算出的全局变量
             webglUtils.setUniforms(programInfo, coneUniforms);
 
             gl.drawArrays(gl.TRIANGLES, 0, coneBufferInfo.numElements);
