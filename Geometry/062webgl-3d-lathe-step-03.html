@@ -8,6 +8,7 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-geometry-lathe.html" target="_blank">WebGL 三维几何加工</a>
     <canvas></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -645,15 +646,15 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             const positions = arrays.position;
             const texcoords = arrays.texcoord;
 
-            // first compute the normal of each face
+            // 首先计算出每个面的法向量
             let getNextIndex = makeIndiceIterator(arrays);
             const numFaceVerts = getNextIndex.numElements;
             const numVerts = arrays.position.length;
             const numFaces = numFaceVerts / 3;
             const faceNormals = [];
 
-            // Compute the normal for every face.
-            // While doing that, create a new vertex for every face vertex
+            // 计算每个面的法向量，
+  // 计算过程中为每个面新建顶点
             for (let i = 0; i < numFaces; ++i) {
                 const n1 = getNextIndex() * 3;
                 const n2 = getNextIndex() * 3;
@@ -669,7 +670,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             let tempVerts = {};
             let tempVertNdx = 0;
 
-            // this assumes vertex positions are an exact match
+            // 假设顶点位置精确匹配
 
             function getVertIndex(x, y, z) {
 
@@ -683,22 +684,21 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 return newNdx;
             }
 
-            // We need to figure out the shared vertices.
-            // It's not as simple as looking at the faces (triangles)
-            // because for example if we have a standard cylinder
-            //
-            //
-            //      3-4
-            //     /   \
-            //    2     5   Looking down a cylinder starting at S
-            //    |     |   and going around to E, E and S are not
-            //    1     6   the same vertex in the data we have
-            //     \   /    as they don't share UV coords.
-            //      S/E
-            //
-            // the vertices at the start and end do not share vertices
-            // since they have different UVs but if you don't consider
-            // them to share vertices they will get the wrong normals
+            // 我们需要算出共享的顶点
+  // 这并不像我们看着面那么简单 (三角形)
+  // 因为加入我们有一个标准的圆柱
+  //
+  //
+  //      3-4
+  //     /   \
+  //    2     5   从上往下看，从 S 走到 E, E 和 S 
+  //    1     6   是不同的点，因为它们不共享UV坐标。
+  //     \   /    
+  //      S/E
+  //
+  // 顶点在其实和结束位置并不是共享的
+  // 由于它们有不同的UV坐标，但如果不
+  // 把它们看作共享顶点就会得到错误结果
 
             const vertIndices = [];
             for (let i = 0; i < numVerts; ++i) {
@@ -707,7 +707,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 vertIndices.push(getVertIndex(vert));
             }
 
-            // go through every vertex and record which faces it's on
+            // 遍历所有顶点记录所在的面
             const vertFaces = [];
             getNextIndex.reset();
             for (let i = 0; i < numFaces; ++i) {
@@ -723,11 +723,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 }
             }
 
-            // now go through every face and compute the normals for each
-            // vertex of the face. Only include faces that aren't more than
-            // maxAngle different. Add the result to arrays of newPositions,
-            // newTexcoords and newNormals, discarding any vertices that
-            // are the same.
+            // 遍历面上的顶点计算每个顶点的法向量
+  // 只计算两面角度不大于 maxAngle 面
+  // 将结果写入 newPositions,
+  // newTexcoords 和 newNormals, 
+  // 丢弃相同的顶点
             tempVerts = {};
             tempVertNdx = 0;
             const newPositions = [];
@@ -755,19 +755,19 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             const newVertIndices = [];
             getNextIndex.reset();
             const maxAngleCos = Math.cos(maxAngle);
-            // for each face
+            // 对每个面
             for (let i = 0; i < numFaces; ++i) {
                 const thisFaceVertexNormals = [];
-                // get the normal for this face
+                // 获取该面的法向量
                 const thisFaceNormal = faceNormals[i];
-                // for each vertex on the face
+                // 对于面上的每一点
                 for (let j = 0; j < 3; ++j) {
                     const ndx = getNextIndex();
                     const sharedNdx = vertIndices[ndx];
                     const faces = vertFaces[sharedNdx];
                     const norm = [0, 0, 0];
                     faces.forEach(faceNdx => {
-                        // is this face facing the same way
+                        // 面的法向量是否相同
                         const otherFaceNormal = faceNormals[faceNdx];
                         const dot = m4.dot(thisFaceNormal, otherFaceNormal);
                         if (dot > maxAngleCos) {

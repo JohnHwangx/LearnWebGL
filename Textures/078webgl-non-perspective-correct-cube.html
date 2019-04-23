@@ -18,6 +18,7 @@
     <div class="description">
         Non Perspective Correct Textured Cube<br />
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-perspective-correct-texturemapping.html" target="_blank">WebGL 纹理映射的透视纠正</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -30,13 +31,13 @@ uniform mat4 u_matrix;
 varying vec2 v_texcoord;
 
 void main() {
-  // Multiply the position by the matrix.
+  // 将位置和矩阵相乘
   gl_Position = u_matrix * a_position;
 
-  // Manually divide by W.
+  // 手工除以 W
   gl_Position /= gl_Position.w;
 
-  // Pass the texcoord to the fragment shader.
+  // 将纹理坐标传到片断着色器
   v_texcoord = a_texcoord;
 }
 </script>

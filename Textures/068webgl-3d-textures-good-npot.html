@@ -13,6 +13,7 @@
     <div class="description">
         Textured F with non power of 2 keyboard texture. <br />
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-textures.html" target="_blank">WebGL 三维纹理</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -97,20 +98,20 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Fill the texture with a 1x1 blue pixel.
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
             new Uint8Array([0, 0, 255, 255]));
-        // Asynchronously load an image
+        // 异步加载图像
         var image = new Image();
         image.src = "../resources/keyboard.jpg";
         image.addEventListener('load', function () {
-            // Now that the image has loaded make copy it to the texture.
+            // 现在有了图像，拷贝到纹理
             gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
-            // Check if the image is a power of 2 in both dimensions.
+            // 检查每个维度是否是 2 的幂
             if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
-                // Yes, it's a power of 2. Generate mips.
+                // 是 2 的幂，一般用贴图
                 gl.generateMipmap(gl.TEXTURE_2D);
             } else {
-                // No, it's not a power of 2. Turn of mips and set wrapping to clamp to edge
+                // 不是 2 的幂，关闭贴图并设置包裹模式为到边缘
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);

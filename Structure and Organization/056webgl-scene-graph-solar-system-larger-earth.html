@@ -13,6 +13,7 @@
     <div class="description">
         Simulating a solar system using a scene graph.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-scene-graph.html" target="_blank">WebGL - 场景图</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -164,9 +165,9 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         };
 
         var earthNode = new Node();
-        // earth 100 units from the sun
+        // 地球离太阳 100 个单位距离
         earthNode.localMatrix = m4.translation(100, 0, 0);
-        // make the earth twice as large
+        // 让地球变为两倍大小
         earthNode.localMatrix = m4.scale(earthNode.localMatrix, 2, 2, 2);
         earthNode.drawInfo = {
             uniforms: {

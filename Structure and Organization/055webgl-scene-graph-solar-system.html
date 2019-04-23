@@ -13,6 +13,7 @@
     <div class="description">
         Simulating a solar system using a scene graph.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-scene-graph.html" target="_blank">WebGL - 场景图</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -25,11 +26,11 @@ uniform mat4 u_matrix;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // Multiply the position by the matrix.
+    gl_Position = u_matrix * a_position;
 
-  // Pass the color to the fragment shader.
-  v_color = a_color;
+    // Pass the color to the fragment shader.
+    v_color = a_color;
 }
 </script>
 <!-- fragment shader -->
@@ -43,7 +44,7 @@ uniform vec4 u_colorMult;
 uniform vec4 u_colorOffset;
 
 void main() {
-   gl_FragColor = v_color * u_colorMult + u_colorOffset;
+    gl_FragColor = v_color * u_colorMult + u_colorOffset;
 }
 </script>
 <!--
@@ -60,13 +61,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     "use strict";
 
     var Node = function () {
-        this.children = [];
-        this.localMatrix = m4.identity();
-        this.worldMatrix = m4.identity();
+        this.children = [];                 // 子节点序列
+        this.localMatrix = m4.identity();   // 当前节点的局部矩阵
+        this.worldMatrix = m4.identity();   // 当前结点的世界矩阵
     };
 
     Node.prototype.setParent = function (parent) {
-        // remove us from our parent
+        // 从父节点中移除
         if (this.parent) {
             var ndx = this.parent.children.indexOf(this);
             if (ndx >= 0) {
@@ -74,7 +75,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             }
         }
 
-        // Add us to our new parent
+        // 添加到新的父节点上
         if (parent) {
             parent.children.push(this);
         }
@@ -83,14 +84,14 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
     Node.prototype.updateWorldMatrix = function (parentWorldMatrix) {
         if (parentWorldMatrix) {
-            // a matrix was passed in so do the math
+            // 传入一个矩阵计算出世界矩阵并存入 `this.worldMatrix`。
             m4.multiply(parentWorldMatrix, this.localMatrix, this.worldMatrix);
         } else {
-            // no matrix was passed in so just copy local to world
+            // 没有矩阵传入，直接将局部矩阵拷贝到世界矩阵
             m4.copy(this.localMatrix, this.worldMatrix);
         }
 
-        // now process all the children
+        // 计算所有的子节点
         var worldMatrix = this.worldMatrix;
         this.children.forEach(function (child) {
             child.updateWorldMatrix(worldMatrix);
@@ -151,12 +152,12 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         var objectsToDraw = [];
         var objects = [];
 
-        // Let's make all the nodes
+        // 定义所有的节点
         var sunNode = new Node();
-        sunNode.localMatrix = m4.translation(0, 0, 0);  // sun a the center
+        sunNode.localMatrix = m4.translation(0, 0, 0);  // 太阳在中心
         sunNode.drawInfo = {
             uniforms: {
-                u_colorOffset: [0.6, 0.6, 0, 1], // yellow
+                u_colorOffset: [0.6, 0.6, 0, 1], // 黄色
                 u_colorMult: [0.4, 0.4, 0, 1],
             },
             programInfo: programInfo,
@@ -164,10 +165,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         };
 
         var earthNode = new Node();
-        earthNode.localMatrix = m4.translation(100, 0, 0);  // earth 100 units from the sun
+        earthNode.localMatrix = m4.translation(100, 0, 0);  // 地球离太阳 100 个单位距离
         earthNode.drawInfo = {
             uniforms: {
-                u_colorOffset: [0.2, 0.5, 0.8, 1],  // blue-green
+                u_colorOffset: [0.2, 0.5, 0.8, 1],  // 蓝绿色
                 u_colorMult: [0.8, 0.5, 0.2, 1],
             },
             programInfo: programInfo,
@@ -175,10 +176,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         };
 
         var moonNode = new Node();
-        moonNode.localMatrix = m4.translation(20, 0, 0);  // moon 20 units from the earth
+        moonNode.localMatrix = m4.translation(20, 0, 0);  // 月亮离地球 20 个单位距离
         moonNode.drawInfo = {
             uniforms: {
-                u_colorOffset: [0.6, 0.6, 0.6, 1],  // gray
+                u_colorOffset: [0.6, 0.6, 0.6, 1],  // 灰色
                 u_colorMult: [0.1, 0.1, 0.1, 1],
             },
             programInfo: programInfo,
@@ -186,7 +187,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         };
 
 
-        // connect the celetial objects
+        // 关联物体
         moonNode.setParent(earthNode);
         earthNode.setParent(sunNode);
 
@@ -236,7 +237,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
             var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
-            // update the local matrices for each object.
+            // 更新每个物体的局部矩阵
             m4.multiply(m4.yRotation(0.01), sunNode.localMatrix, sunNode.localMatrix);
             m4.multiply(m4.yRotation(0.01), earthNode.localMatrix, earthNode.localMatrix);
             m4.multiply(m4.yRotation(0.01), moonNode.localMatrix, moonNode.localMatrix);
@@ -244,7 +245,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Update all world matrices in the scene graph
             sunNode.updateWorldMatrix();
 
-            // Compute all the matrices for rendering
+            // 计算每个物体的矩阵
             objects.forEach(function (object) {
                 object.drawInfo.uniforms.u_matrix = m4.multiply(viewProjectionMatrix, object.worldMatrix);
             });

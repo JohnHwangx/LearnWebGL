@@ -13,6 +13,7 @@
     <div class="description">
         Simulating a solar system using a scene graph.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-scene-graph.html" target="_blank">WebGL - 场景图</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -245,12 +246,12 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
             var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
-            // update the local matrices for each object.
+            // 更新每个物体的局部矩阵
             m4.multiply(m4.yRotation(0.01), earthOrbitNode.localMatrix, earthOrbitNode.localMatrix);
             m4.multiply(m4.yRotation(0.01), moonOrbitNode.localMatrix, moonOrbitNode.localMatrix);
-            // spin the earth
+            // 旋转地球
             m4.multiply(m4.yRotation(0.05), earthNode.localMatrix, earthNode.localMatrix);
-            // spin the moon
+            // 旋转月亮
             m4.multiply(m4.yRotation(-0.01), moonNode.localMatrix, moonNode.localMatrix);
 
             // Update all world matrices in the scene graph

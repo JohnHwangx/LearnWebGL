@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <canvas id="c"></canvas>
+  <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-perspective-correct-texturemapping.html" target="_blank">WebGL 纹理映射的透视纠正</a>
+  <canvas id="c"></canvas>
 </body>
 
 </html>
@@ -24,28 +25,28 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 <script src="../resources/webgl-utils.js"></script>
 <script id="2d-vertex-shader" type="notjs">
 
-  attribute vec4 a_position;
-  attribute float a_brightness;
+    attribute vec4 a_position;
+    attribute float a_brightness;
 
-  varying float v_brightness;
+    varying float v_brightness;
 
-  void main() {
-    gl_Position = a_position;
+    void main() {
+        gl_Position = a_position;
 
-    // just pass the brightness on to the fragment shader
-    v_brightness = a_brightness;
-  }
+        // 直接传递亮度到片断着色器
+        v_brightness = a_brightness;
+    }
 
 </script>
 
 <script id="2d-fragment-shader" type="notjs">
- precision mediump float;
+    precision mediump float;
+    // 顶点着色器的值插值后传入这里
+    varying float v_brightness;  
 
- varying float v_brightness;  
-
- void main() {
-   gl_FragColor = vec4(v_brightness, 0, 0, 1);  // reds
- }
+    void main() {
+        gl_FragColor = vec4(v_brightness, 0, 0, 1);  // 红色
+    }
 
 </script>
 <script>
@@ -62,7 +63,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // setup GLSL program
         var program = webglUtils.createProgramFromScripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
 
-        // look up where the vertex data needs to go.
+        // 找到顶点数据的输入位置
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
         var brightnessAttributeLocation = gl.getAttribLocation(program, "a_brightness");
 
@@ -90,24 +91,24 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-        // Create a buffer and put 12 brightness values in it
+        // 创建缓冲并放入 12 个亮度值
         var brightnessBuffer = gl.createBuffer();
 
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = brightnessBuffer)
+        // 绑定到 ARRAY_BUFFER (think of it as ARRAY_BUFFER = brightnessBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, brightnessBuffer);
 
         var brightness = [
-            0,  // 1st rect 1st triangle
+            0,  // 第一个矩形的第一个三角形
             1,
             0,
-            0,  // 1st rect 2nd triangle
+            0,  // 第一个矩形的第二个三角形
             1,
             1,
 
-            0,  // 2nd rect 1st triangle
+            0,  // 第二个矩形的第一个三角形
             1,
             0,
-            0,  // 2nd rect 2nd triangle
+            0,  // 第二个矩形的第二个三角形
             1,
             1,
         ];
@@ -129,7 +130,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Tell it to use our program (pair of shaders)
         gl.useProgram(program);
 
-        // Turn on the attribute
+        // 启用属性
         gl.enableVertexAttribArray(positionAttributeLocation);
 
         // Bind the position buffer.
@@ -144,18 +145,18 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         gl.vertexAttribPointer(
             positionAttributeLocation, size, type, normalize, stride, offset);
 
-        // Turn on the attribute
+        // 启用属性
         gl.enableVertexAttribArray(brightnessAttributeLocation);
 
-        // Bind the position buffer.
+        // 绑定位置缓冲
         gl.bindBuffer(gl.ARRAY_BUFFER, brightnessBuffer);
 
-        // Tell the attribute how to get data out of brightnessBuffer (ARRAY_BUFFER)
-        var size = 1;          // 1 component per iteration
-        var type = gl.FLOAT;   // the data is 32bit floats
-        var normalize = false; // don't normalize the data
-        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-        var offset = 0;        // start at the beginning of the buffer
+        // 告诉属性如何从缓冲中读取数据
+        var size = 1;          // 每次迭代读取一个单位数据
+        var type = gl.FLOAT;   // 数据类型是 32 位浮点型
+        var normalize = false; // 不用单位化
+        var stride = 0;        // 每次迭代需要移动的距离
+        var offset = 0;        // 从缓冲的起始处开始
         gl.vertexAttribPointer(
             brightnessAttributeLocation, size, type, normalize, stride, offset);
 

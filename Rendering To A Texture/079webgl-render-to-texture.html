@@ -13,6 +13,8 @@
     <div class="description">
         Render To Texture<br />
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-render-to-texture.html" target="_blank">WebGL
+        渲染到纹理</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -120,14 +122,14 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         }
 
-        // Create a texture to render to
+        // 创建渲染对象
         const targetTextureWidth = 256;
         const targetTextureHeight = 256;
         const targetTexture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, targetTexture);
 
         {
-            // define size and format of level 0
+            // 定义 0 级的大小和格式
             const level = 0;
             const internalFormat = gl.RGBA;
             const border = 0;
@@ -138,17 +140,17 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 targetTextureWidth, targetTextureHeight, border,
                 format, type, data);
 
-            // set the filtering so we don't need mips
+            // 设置筛选器，不需要使用贴图
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         }
 
-        // Create and bind the framebuffer
+        // 创建并绑定帧缓冲
         const fb = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
 
-        // attach the texture as the first color attachment
+        // 附加纹理为第一个颜色附件
         const attachmentPoint = gl.COLOR_ATTACHMENT0;
         const level = 0;
         gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, targetTexture, level);
@@ -167,40 +169,40 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         requestAnimationFrame(drawScene);
 
         function drawCube(aspect) {
-            // Tell it to use our program (pair of shaders)
+            // 告诉它使用的程序（着色器对）
             gl.useProgram(program);
 
-            // Turn on the position attribute
+            // 启用位置属性
             gl.enableVertexAttribArray(positionLocation);
 
-            // Bind the position buffer.
+            // 绑定到位置缓冲
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-            // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-            var size = 3;          // 3 components per iteration
-            var type = gl.FLOAT;   // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;        // start at the beginning of the buffer
+            // 告诉位置属性如何从 positionBuffer (ARRAY_BUFFER) 中读取数据
+            var size = 3;          // 每次迭代需要三个单位数据
+            var type = gl.FLOAT;   // 单位数据类型为 32 位浮点型
+            var normalize = false; // 不需要单位化
+            var stride = 0;        // 每次迭代移动的距离
+            var offset = 0;        // 从缓冲起始处开始
             gl.vertexAttribPointer(
                 positionLocation, size, type, normalize, stride, offset);
 
-            // Turn on the teccord attribute
+            // 启用纹理坐标属性
             gl.enableVertexAttribArray(texcoordLocation);
 
-            // Bind the position buffer.
+            // 绑定纹理坐标缓冲
             gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
 
-            // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-            var size = 2;          // 2 components per iteration
-            var type = gl.FLOAT;   // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0;        // start at the beginning of the buffer
+            // 告诉纹理坐标属性如何从 texcoordBuffer 读取数据
+  var size = 2;          // 每次迭代两个单位数据
+  var type = gl.FLOAT;   // 单位数据类型是 32 位浮点型
+  var normalize = false; // 不需要单位化数据
+  var stride = 0;        // 每次迭代移动的数据
+  var offset = 0;        // 从缓冲起始处开始
             gl.vertexAttribPointer(
                 texcoordLocation, size, type, normalize, stride, offset);
 
-            // Compute the projection matrix
+            // 计算投影矩阵
             var projectionMatrix =
                 m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
 
@@ -208,10 +210,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var up = [0, 1, 0];
             var target = [0, 0, 0];
 
-            // Compute the camera's matrix using look at.
+            // 计算相机矩阵
             var cameraMatrix = m4.lookAt(cameraPosition, target, up);
 
-            // Make a view matrix from the camera matrix.
+            // 根据相机矩阵计算视图矩阵
             var viewMatrix = m4.inverse(cameraMatrix);
 
             var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
@@ -219,17 +221,17 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var matrix = m4.xRotate(viewProjectionMatrix, modelXRotationRadians);
             matrix = m4.yRotate(matrix, modelYRotationRadians);
 
-            // Set the matrix.
+            // 设置矩阵
             gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-            // Tell the shader to use texture unit 0 for u_texture
+            // 使用纹理单元 0
             gl.uniform1i(textureLocation, 0);
 
-            // Draw the geometry.
+            // 绘制几何体
             gl.drawArrays(gl.TRIANGLES, 0, 6 * 6);
         }
 
-        // Draw the scene.
+        // 绘制场景
         function drawScene(time) {
             // convert to seconds
             time *= 0.001;
@@ -248,16 +250,16 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             gl.enable(gl.DEPTH_TEST);
 
             {
-                // render to our targetTexture by binding the framebuffer
+                // 通过绑定帧缓冲绘制到纹理
                 gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
 
-                // render cube with our 3x2 texture
+                // 使用 3×2 的纹理渲染立方体
                 gl.bindTexture(gl.TEXTURE_2D, texture);
 
-                // Tell WebGL how to convert from clip space to pixels
+                // 告诉WebGL如何从裁剪空间映射到像素空间
                 gl.viewport(0, 0, targetTextureWidth, targetTextureHeight);
 
-                // Clear the canvas AND the depth buffer.
+                // 清空画布和深度缓冲
                 gl.clearColor(0, 0, 1, 1);   // clear to blue
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -266,16 +268,16 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             }
 
             {
-                // render to the canvas
+                // 渲染到画布
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-                // render the cube with the texture we just rendered to
+                // 立方体使用刚才渲染的纹理
                 gl.bindTexture(gl.TEXTURE_2D, targetTexture);
 
-                // Tell WebGL how to convert from clip space to pixels
+                // 告诉WebGL如何从裁剪空间映射到像素空间
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-                // Clear the canvas AND the depth buffer.
+                // 清空画布和深度缓冲
                 gl.clearColor(1, 1, 1, 1);   // clear to white
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

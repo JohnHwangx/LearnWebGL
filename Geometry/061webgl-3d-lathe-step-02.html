@@ -7,6 +7,7 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-geometry-lathe.html" target="_blank">WebGL 三维几何加工</a>
     <canvas></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -391,13 +392,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             return outPoints;
         }
 
-        // rotates around Y axis.
+        // 绕 Y 轴旋转
         function lathePoints(points,
-            startAngle,   // angle to start at (ie 0)
-            endAngle,     // angle to end at (ie Math.PI * 2)
-            numDivisions, // how many quads to make around
-            capStart,     // true to cap the top
-            capEnd) {     // true to cap the bottom
+            startAngle,   // 起始角 (例如 0)
+            endAngle,     // 终止角 (例如 Math.PI * 2)
+            numDivisions, // 这中间生成多少块
+            capStart,     // true 就封闭起点
+            capEnd) {     // true 就封闭终点
             const positions = [];
             const texcoords = [];
             const indices = [];
@@ -406,27 +407,27 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             const pointsPerColumn = points.length + vOffset + (capEnd ? 1 : 0);
             const quadsDown = pointsPerColumn - 1;
 
-            // generate v coordniates
+            // 生成 v 值
             let vcoords = [];
 
-            // first compute the length of the points
+            // 先计算出每一点对应的长度
             let length = 0;
             for (let i = 0; i < points.length - 1; ++i) {
                 vcoords.push(length);
                 length += v2.distance(points[i], points[i + 1]);
             }
-            vcoords.push(length);  // the last point
+            vcoords.push(length);  // 最后一个点
 
-            // now divide each by the total length;
+            // 除以总长
             vcoords = vcoords.map(v => v / length);
 
-            // generate points
+            // 生成点
             for (let division = 0; division <= numDivisions; ++division) {
                 const u = division / numDivisions;
                 const angle = lerp(startAngle, endAngle, u);
                 const mat = m4.yRotation(angle);
                 if (capStart) {
-                    // add point on Y access at start
+                    // 在开始处添加一个 Y 轴上的点
                     positions.push(0, points[0][1], 0);
                     texcoords.push(u, 0);
                 }
@@ -436,13 +437,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                     texcoords.push(u, vcoords[ndx]);
                 });
                 if (capEnd) {
-                    // add point on Y access at end
+                    // 在终点处添加一个 Y 轴上的点
                     positions.push(0, points[points.length - 1][1], 0);
                     texcoords.push(u, 1);
                 }
             }
 
-            // generate indices
+            // 创建索引
             for (let division = 0; division < numDivisions; ++division) {
                 const column1Offset = division * pointsPerColumn;
                 const column2Offset = column1Offset + pointsPerColumn;

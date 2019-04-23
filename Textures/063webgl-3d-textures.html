@@ -13,6 +13,7 @@
     <div class="description">
         Textured F with Fs
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-textures.html" target="_blank">WebGL 三维纹理</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -25,21 +26,21 @@ uniform mat4 u_matrix;
 varying vec2 v_texcoord;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // 将位置和矩阵相乘
+    gl_Position = u_matrix * a_position;
 
-  // Pass the texcoord to the fragment shader.
-  v_texcoord = a_texcoord;
+    // 传递纹理坐标到片断着色器
+    v_texcoord = a_texcoord;
 }
 </script>
 <!-- fragment shader -->
 <script id="3d-fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed in from the vertex shader.
+// 从顶点着色器中传入的值
 varying vec2 v_texcoord;
 
-// The texture.
+// 纹理
 uniform sampler2D u_texture;
 
 void main() {
@@ -70,7 +71,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // setup GLSL program
         var program = webglUtils.createProgramFromScripts(gl, ["3d-vertex-shader", "3d-fragment-shader"]);
 
-        // look up where the vertex data needs to go.
+        // 找到顶点坐标中的属性
         var positionLocation = gl.getAttribLocation(program, "a_position");
         var texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
 
@@ -85,23 +86,23 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Put the positions in the buffer
         setGeometry(gl);
 
-        // provide texture coordinates for the rectangle.
+        // 为纹理坐标创建一个缓冲
         var texcoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-        // Set Texcoords.
+        // 设置纹理坐标
         setTexcoords(gl);
 
-        // Create a texture.
+        // 创建一个纹理
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        // Fill the texture with a 1x1 blue pixel.
+        // 用 1x1 个蓝色像素填充纹理
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
             new Uint8Array([0, 0, 255, 255]));
-        // Asynchronously load an image
+        // 异步加载图像
         var image = new Image();
         image.src = "../resources/f-texture.png";
         image.addEventListener('load', function () {
-            // Now that the image has loaded make copy it to the texture.
+            // 现在图像加载完成，拷贝到纹理中
             gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
             gl.generateMipmap(gl.TEXTURE_2D);
@@ -178,6 +179,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var normalize = false; // don't normalize the data
             var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
             var offset = 0;        // start at the beginning of the buffer
+            // 以浮点型格式传递纹理坐标
             gl.vertexAttribPointer(
                 texcoordLocation, size, type, normalize, stride, offset);
 
@@ -365,7 +367,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
     }
 
-    // Fill the buffer with texture coordinates the F.
+    // 为 F 设置纹理坐标缓冲
     function setTexcoords(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,

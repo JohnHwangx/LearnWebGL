@@ -13,6 +13,7 @@
     <div class="description">
         A 3x2 texture<br />
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-data-textures.html" target="_blank">WebGL 数据纹理</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -91,11 +92,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Set Texcoords.
         setTexcoords(gl);
 
-        // Create a texture.
+        // 创建一个纹理
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        // fill texture with 3x2 pixels
+        // 用 3x2 的像素填充纹理
         const level = 0;
         const internalFormat = gl.LUMINANCE;
         const width = 3;
@@ -107,12 +108,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             128, 64, 128,
             0, 192, 0,
         ]);
+        // 告诉WebGL一次处理 1 个字节
         const alignment = 1;
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, alignment);
         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border,
             format, type, data);
 
-        // set the filtering so we don't need mips and it's not filtered
+        // 设置筛选器，我们不需要使用贴图所以就不用筛选器了
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -271,7 +273,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
     }
 
-    // Fill the buffer with texture coordinates the cube.
+    // 填充立方体纹理坐标的缓冲
     function setTexcoords(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,

@@ -7,6 +7,7 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-geometry-lathe.html" target="_blank">WebGL 三维几何加工</a>
     <canvas></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -315,13 +316,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             const outPoints = newPoints || [];
             if (flatness(points, offset) < tolerance) {
 
-                // just add the end points of this curve
+                // 将它加入点队列中
                 outPoints.push(points[offset + 0]);
                 outPoints.push(points[offset + 3]);
 
             } else {
 
-                // subdivide
+                // 拆分
                 const t = .5;
                 const p1 = points[offset + 0];
                 const p2 = points[offset + 1];
@@ -337,16 +338,16 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
                 const red = v2.lerp(r1, r2, t);
 
-                // do 1st half
+                // 求前半段的点
                 getPointsOnBezierCurveWithSplitting([p1, q1, r1, red], 0, tolerance, outPoints);
-                // do 2nd half
+                // 求后半段的点
                 getPointsOnBezierCurveWithSplitting([red, r2, q3, p4], 0, tolerance, outPoints);
 
             }
             return outPoints;
         }
 
-        // gets points across all segments
+        // 获取所有片段的点
         function getPointsOnBezierCurves(points, tolerance) {
             const newPoints = [];
             const numSegments = (points.length - 1) / 3;
@@ -361,7 +362,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         function simplifyPoints(points, start, end, epsilon, newPoints) {
             const outPoints = newPoints || [];
 
-            // find the most distant point from the line formed by the endpoints
+            // 找到离最后两点距离最远的点
             const s = points[start];
             const e = points[end - 1];
             let maxDistSq = 0;
@@ -374,29 +375,29 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 }
             }
 
-            // if that point is too far
+            // 如果距离太远
             if (Math.sqrt(maxDistSq) > epsilon) {
 
-                // split
+                // 拆分
                 simplifyPoints(points, start, maxNdx + 1, epsilon, outPoints);
                 simplifyPoints(points, maxNdx, end, epsilon, outPoints);
 
             } else {
 
-                // add the 2 end points
+                // 添加最后两个点
                 outPoints.push(s, e);
             }
 
             return outPoints;
         }
 
-        // rotates around Y axis.
+        // 绕 Y 轴旋转
         function lathePoints(points,
-            startAngle,   // angle to start at (ie 0)
-            endAngle,     // angle to end at (ie Math.PI * 2)
-            numDivisions, // how many quads to make around
-            capStart,     // true to cap the top
-            capEnd) {     // true to cap the bottom
+            startAngle,   // 起始角 (例如 0)
+            endAngle,     // 终止角 (例如 Math.PI * 2)
+            numDivisions, // 这中间生成多少块
+            capStart,     // true 就封闭起点
+            capEnd) {     // true 就封闭终点
             const positions = [];
             const texcoords = [];
             const indices = [];
@@ -405,13 +406,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             const pointsPerColumn = points.length + vOffset + (capEnd ? 1 : 0);
             const quadsDown = pointsPerColumn - 1;
 
-            // generate points
+            // 生成点
             for (let division = 0; division <= numDivisions; ++division) {
                 const u = division / numDivisions;
                 const angle = lerp(startAngle, endAngle, u);
                 const mat = m4.yRotation(angle);
                 if (capStart) {
-                    // add point on Y access at start
+                    // 在开始处添加一个 Y 轴上的点
                     positions.push(0, points[0][1], 0);
                     texcoords.push(u, 0);
                 }
@@ -423,13 +424,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                     texcoords.push(u, v); // v?
                 });
                 if (capEnd) {
-                    // add point on Y access at end
+                    // 在终点处添加一个 Y 轴上的点
                     positions.push(0, points[points.length - 1][1], 0);
                     texcoords.push(u, 1);
                 }
             }
 
-            // generate indices
+            // 创建索引
             for (let division = 0; division < numDivisions; ++division) {
                 const column1Offset = division * pointsPerColumn;
                 const column2Offset = column1Offset + pointsPerColumn;

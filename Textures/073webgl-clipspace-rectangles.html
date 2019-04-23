@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <canvas id="c"></canvas>
+  <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-perspective-correct-texturemapping.html" target="_blank">WebGL 纹理映射的透视纠正</a>
+  <canvas id="c"></canvas>
 </body>
 
 </html>
@@ -24,14 +25,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 <script src="../resources/webgl-utils.js"></script>
 <script id="2d-vertex-shader" type="notjs">
 
-  // an attribute will receive data from a buffer
+  // 属性从缓冲中获取数据
   attribute vec4 a_position;
 
-  // all shaders have a main function
+  // 所有的着色器都有一个 main 函数
   void main() {
 
-    // gl_Position is a special variable a vertex shader
-    // is responsible for setting
+    // gl_Position 是着色器需要设置的一个特殊的变量
     gl_Position = a_position;
   }
 
@@ -39,14 +39,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
 <script id="2d-fragment-shader" type="notjs">
 
-  // fragment shaders don't have a default precision so we need
-  // to pick one. mediump is a good default
+  // 片断着色器没有默认的精度，
+  // 中等精度是个不错的默认值
   precision mediump float;
 
   void main() {
-    // gl_FragColor is a special variable a fragment shader
-    // is responsible for setting
-    gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+    // gl_FragColor 是片断着色器需要设置的一个特殊变量
+    gl_FragColor = vec4(1, 0, 0.5, 1); // 返回红紫色
   }
 
 </script>
@@ -75,17 +74,17 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         var positions = [
-            -.8, .8, 0, 1,  // 1st rect 1st triangle
+            -.8, .8, 0, 1,  // 第一个矩形的第一个三角形
             .8, .8, 0, 1,
             -.8, .2, 0, 1,
-            -.8, .2, 0, 1,  // 1st rect 2nd triangle
+            -.8, .2, 0, 1,  // 第一个矩形的第二个三角形
             .8, .8, 0, 1,
             .8, .2, 0, 1,
 
-            -.8, -.2, 0, 1,  // 2nd rect 1st triangle
+            -.8, -.2, 0, 1,  // 第二个矩形的第一个三角形
             .8, -.2, 0, 1,
             -.8, -.8, 0, 1,
-            -.8, -.8, 0, 1,  // 2nd rect 2nd triangle
+            -.8, -.8, 0, 1,  // 第二个矩形的第二个三角形
             .8, -.2, 0, 1,
             .8, -.8, 0, 1,
         ];

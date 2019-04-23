@@ -10,6 +10,8 @@
 </head>
 
 <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-cors-permission.html" target="_blank">WebGL
+        跨域图像</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -101,27 +103,27 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
         function requestCORSIfNotSameOrigin(img, url) {
             if ((new URL(url)).origin !== window.location.origin) {
-                img.crossOrigin = "";
+                img.crossOrigin = "";// 请求 CORS 许可
             }
         }
 
-        // creates a texture info { width: w, height: h, texture: tex }
-        // The texture will start with 1x1 pixels and be updated
-        // when the image has loaded
+        // 创建纹理信息 { width: w, height: h, texture: tex }
+        // 纹理起初为 1×1 像素
+        // 当图像下载完成后加载图像
         function loadImageAndCreateTextureInfo(url) {
             var tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            // Fill the texture with a 1x1 blue pixel.
+            // 用 1x1 蓝色像素填充纹理
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
                 new Uint8Array([0, 0, 255, 255]));
 
-            // let's assume all images are not a power of 2
+            // 假设所有的图像大小都不是 2 的整数次幂
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             var textureInfo = {
-                width: 1,   // we don't know the size until it loads
+                width: 1,   // 在图像下载完之前不知道大小
                 height: 1,
                 texture: tex,
             };

@@ -13,6 +13,7 @@
     <div class="description">
         Simulating a solar system using a scene graph.
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-scene-graph.html" target="_blank">WebGL - 场景图</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -154,9 +155,9 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Let's make all the nodes
         var solarSystemNode = new Node();
         var earthOrbitNode = new Node();
-        earthOrbitNode.localMatrix = m4.translation(100, 0, 0);  // earth orbit 100 units from the sun
+        earthOrbitNode.localMatrix = m4.translation(100, 0, 0);  // 地球轨道离太阳 100 个单位距离
         var moonOrbitNode = new Node();
-        moonOrbitNode.localMatrix = m4.translation(20, 0, 0);  // moon 20 units from the earth
+        moonOrbitNode.localMatrix = m4.translation(20, 0, 0);  // 月球离地球 20 个单位距离
 
         var sunNode = new Node();
         sunNode.localMatrix = m4.translation(0, 0, 0);  // sun a the center
@@ -170,7 +171,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         };
 
         var earthNode = new Node();
-        earthNode.localMatrix = m4.scaling(2, 2, 2);   // make the earth twice as large
+        earthNode.localMatrix = m4.scaling(2, 2, 2);   // 让地球变为两倍大小
         earthNode.drawInfo = {
             uniforms: {
                 u_colorOffset: [0.2, 0.5, 0.8, 1],  // blue-green
@@ -244,11 +245,11 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
             var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
-            // update the local matrices for each object.
+            // 更新每个物体的局部矩阵
             m4.multiply(m4.yRotation(0.01), earthOrbitNode.localMatrix, earthOrbitNode.localMatrix);
             m4.multiply(m4.yRotation(0.01), moonOrbitNode.localMatrix, moonOrbitNode.localMatrix);
 
-            // Update all world matrices in the scene graph
+            // 更新场景图中所有节点的世界矩阵
             solarSystemNode.updateWorldMatrix();
 
             // Compute all the matrices for rendering

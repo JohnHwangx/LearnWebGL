@@ -13,6 +13,8 @@
     <div class="description">
         Draw multiple objects by list with optimization checks
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-drawing-multiple-things.html" target="_blank">WebGL
+        绘制多个物体</a>
     <canvas id="canvas"></canvas>
 </body>
 <!--
@@ -86,6 +88,7 @@ void main() {
         var cubeBufferInfo = createFlattenedVertices(gl, primitives.createCubeVertices(20));
         var coneBufferInfo = createFlattenedVertices(gl, primitives.createTruncatedConeVertices(10, 0, 20, 12, 1, true, false));
 
+        // 将图形放在数组中以便随机抽取
         var shapes = [
             sphereBufferInfo,
             cubeBufferInfo,
@@ -113,13 +116,17 @@ void main() {
         var fieldOfViewRadians = degToRad(60);
         var cameraHeight = 50;
 
+        // 创建两个对象数组，一个用于绘制，一个用于使用
         var objectsToDraw = [];
         var objects = [];
 
         // Make infos for each object for each object.
         var baseHue = rand(0, 360);
+        // 每个物体的全局变量
         var numObjects = 200;
         for (var ii = 0; ii < numObjects; ++ii) {
+
+            // 创建一个物体
             var object = {
                 uniforms: {
                     u_colorMult: chroma.hsv(emod(baseHue + rand(0, 120), 360), rand(0.5, 1), rand(0.5, 1)).gl(),
@@ -130,6 +137,7 @@ void main() {
                 yRotationSpeed: rand(0.8, 1.2),
             };
             objects.push(object);
+            // 添加到绘制数组中
             objectsToDraw.push({
                 programInfo: programInfo,
                 bufferInfo: shapes[ii % shapes.length],
@@ -179,7 +187,7 @@ void main() {
 
             var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
-            // Compute the matrices for each object.
+            // 计算每个物体的矩阵
             objects.forEach(function (object) {
                 object.uniforms.u_matrix = computeMatrix(
                     viewProjectionMatrix,
@@ -202,23 +210,22 @@ void main() {
                     lastUsedProgramInfo = programInfo;
                     gl.useProgram(programInfo.program);
 
-                    // We have to rebind buffers when changing programs because we
-                    // only bind buffers the program uses. So if 2 programs use the same
-                    // bufferInfo but the 1st one uses only positions the when the
-                    // we switch to the 2nd one some of the attributes will not be on.
+                    // 更换程序后要重新绑定缓冲，因为只需要绑定程序要用的缓冲。
+                    // 如果两个程序使用相同的bufferInfo但是第一个只用位置数据，
+                    // 当我们从第一个程序切换到第二个时，有些属性就不存在。
                     bindBuffers = true;
                 }
 
-                // Setup all the needed attributes.
+                // 设置所需的属性
                 if (bindBuffers || bufferInfo !== lastUsedBufferInfo) {
                     lastUsedBufferInfo = bufferInfo;
                     webglUtils.setBuffersAndAttributes(gl, programInfo, bufferInfo);
                 }
 
-                // Set the uniforms.
+                // 设置全局变量
                 webglUtils.setUniforms(programInfo, object.uniforms);
 
-                // Draw
+                // 绘制
                 gl.drawArrays(gl.TRIANGLES, 0, bufferInfo.numElements);
             });
 

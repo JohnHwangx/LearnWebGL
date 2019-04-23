@@ -13,6 +13,7 @@
     <div class="description">
         A human hierarchy using a scene graph
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-scene-graph.html" target="_blank">WebGL - 场景图</a>
     <canvas id="canvas"></canvas>
 </body>
 <!-- vertex shader -->
@@ -70,6 +71,8 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         var t = this.translation;
         var r = this.rotation;
         var s = this.scale;
+
+        // 通过平移，旋转和缩放计算矩阵
         m4.translation(t[0], t[1], t[2], dst);
         m4.xRotate(dst, r[0], dst);
         m4.yRotate(dst, r[1], dst);
@@ -274,6 +277,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         };
 
         function makeNode(nodeDescription) {
+            // 在初始化阶段用源初始化节点
             var trs = new TRS();
             var node = new Node(trs);
             nodeInfosByName[nodeDescription.name] = {
