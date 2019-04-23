@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf8">
 <title>WebGL Text - Glyphs</title>
-<link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet" />
+<link type="text/css" href="../../resources/webgl-tutorials.css" rel="stylesheet" />
 <!--
 for most samples webgl-utils only provides shader compiling/linking and
 canvas resizing because why clutter the examples with code that's the same in every sample.
@@ -12,9 +12,9 @@ See http://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
 and http://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
 for webgl-utils, m3, m4, and webgl-lessons-ui.
 -->
-<script src="resources/webgl-utils.js"></script>
-<script src="resources/m4.js"></script>
-<script src="resources/primitives.js"></script>
+<script src="../../resources/webgl-utils.js"></script>
+<script src="../../resources/m4.js"></script>
+<script src="../../resources/primitives.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -231,7 +231,7 @@ function main() {
                 new Uint8Array([0, 0, 255, 255]));
   // Asynchronously load an image
   var image = new Image();
-  image.src = "resources/8x8-font.png";
+  image.src = "../../resources/8x8-font.png";
   image.addEventListener('load', function() {
     // Now that the image has loaded make copy it to the texture.
     gl.bindTexture(gl.TEXTURE_2D, glyphTex);
