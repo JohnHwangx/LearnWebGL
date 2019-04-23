@@ -13,6 +13,7 @@
     <div class="description">
         Draw multiple objects using a list
     </div>
+    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-drawing-multiple-things.html" target="_blank">WebGL 绘制多个物体</a>
     <canvas id="canvas"></canvas>
 </body>
 <!--
@@ -35,11 +36,11 @@ uniform mat4 u_matrix;
 varying vec4 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+    // Multiply the position by the matrix.
+    gl_Position = u_matrix * a_position;
 
-  // Pass the color to the fragment shader.
-  v_color = a_color;
+    // Pass the color to the fragment shader.
+    v_color = a_color;
 }
 </script>
 <!-- fragment shader -->
@@ -52,7 +53,7 @@ varying vec4 v_color;
 uniform vec4 u_colorMult;
 
 void main() {
-   gl_FragColor = v_color * u_colorMult;
+    gl_FragColor = v_color * u_colorMult;
 }
 </script>
 <script>
@@ -180,7 +181,7 @@ void main() {
             var coneXRotation = time;
             var coneYRotation = -time;
 
-            // Compute the matrices for each object.
+            // 为每个物体计算矩阵
             sphereUniforms.u_matrix = computeMatrix(
                 viewProjectionMatrix,
                 sphereTranslation,
@@ -199,7 +200,7 @@ void main() {
                 coneXRotation,
                 coneYRotation);
 
-            // ------ Draw the objects --------
+            // ------ 绘制几何体 --------
 
             objectsToDraw.forEach(function (object) {
                 var programInfo = object.programInfo;
@@ -207,13 +208,13 @@ void main() {
 
                 gl.useProgram(programInfo.program);
 
-                // Setup all the needed attributes.
+                // 设置所需的属性
                 webglUtils.setBuffersAndAttributes(gl, programInfo, bufferInfo);
 
-                // Set the uniforms.
+                // 设置全局变量
                 webglUtils.setUniforms(programInfo, object.uniforms);
 
-                // Draw
+                // 绘制
                 gl.drawArrays(gl.TRIANGLES, 0, bufferInfo.numElements);
             });
 
