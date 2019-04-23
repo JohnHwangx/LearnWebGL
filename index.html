@@ -193,29 +193,29 @@
 
     <script>
         function extractQuery() {
-            var p = window.location.search.indexOf('?q=');
+            let p = window.location.search.indexOf('?q=');
             if (p != -1) {
                 return window.location.search.substr(3);
             }
             return '';
         }
 
-        var panel = document.getElementById('panel');
-        var content = document.getElementById('content');
-        var viewer = document.getElementById('viewer');
+        let panel = document.getElementById('panel');
+        let content = document.getElementById('content');
+        let viewer = document.getElementById('viewer');
 
-        var container = document.createElement('div');
+        let container = document.createElement('div');
         content.appendChild(container);
 
-        var links = {};
-        var selected = null;
+        let links = {};
+        let selected = null;
 
         function createLink(file) {
 
-            var link = document.createElement('a');
+            let link = document.createElement('a');
             link.className = 'link';
             link.href = file + '.html';
-            link.textContent = file.substring(file.indexOf('-')+1);
+            link.textContent = file.substring(file.indexOf('-') + 1);
             link.setAttribute('target', 'viewer');
             link.addEventListener('click', function (event) {
 
@@ -228,25 +228,33 @@
             return link;
         }
 
-        for (var key in files) {
+        createFileList(files, 'h2','');
+        function createFileList(filesList, headTag, subkey) {
 
-            var section = files[key];
+            for (let key in filesList) {
 
-            var header = document.createElement('h2');
-            header.textContent = key;
-            header.setAttribute('data-category', key);
-            container.appendChild(header);
+                let section = filesList[key];
 
-            for (let i = 0; i < section.length; i++) {
+                let header = document.createElement(headTag);
+                header.textContent = key;
+                header.setAttribute('data-category', key);
+                container.appendChild(header);
 
-                let file = section[i];
+                if (section instanceof Array) {
+                    for (let i = 0; i < section.length; i++) {
 
-                let link = createLink(file);
-                container.appendChild(link);
+                        let file = subkey + '\\' + key + '\\' + section[i];
 
-                links[file] = link;
+                        let link = createLink(file);
+                        container.appendChild(link);
+
+                        links[file] = link;
+                    }
+                }
+                else if (section instanceof Object) {
+                    createFileList(section, 'h3', key);
+                }
             }
-
         }
 
         function loadFile(file) {
@@ -258,7 +266,7 @@
             if (selected !== null) {
                 links[selected].classList.remove('selected');
             }
-            
+
             links[file].classList.add('selected');
 
             window.location.hash = file;
@@ -294,7 +302,7 @@
         }
 
         function getName(file) {
-            var name = file.split('-');
+            let name = file.split('-');
             name.shift();
             return name.join(' / ');
         }

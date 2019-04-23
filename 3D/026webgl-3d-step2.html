@@ -5,8 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>WebGL - 3D Step 1 - Use 3D Math</title>
-    <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet" />
+    <title>WebGL - 3D Step 2 - Use 3D Geometry</title>
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -36,7 +36,7 @@ attribute vec4 a_position;
 uniform mat4 u_matrix;
 
 void main() {
-    // 将位置和矩阵相乘
+    // Multiply the position by the matrix.
     gl_Position = u_matrix * a_position;
 }
 </script>
@@ -47,7 +47,7 @@ precision mediump float;
 uniform vec4 u_color;
 
 void main() {
-   gl_FragColor = u_color;
+    gl_FragColor = u_color;
 }
 </script>
 <!--
@@ -57,8 +57,8 @@ See http://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
 and http://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
 for webgl-utils, m3, m4, and webgl-lessons-ui.
 -->
-<script src="resources/webgl-utils.js"></script>
-<script src="resources/webgl-lessons-ui.js"></script>
+<script src="../resources/webgl-utils.js"></script>
+<script src="../resources/webgl-lessons-ui.js"></script>
 <script>
     "use strict";
 
@@ -156,19 +156,19 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Bind the position buffer.
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-            // 告诉属性怎么从 positionBuffer (ARRAY_BUFFER) 中读取位置
-            var size = 3;          // 每次迭代使用 3 个单位的数据
-            var type = gl.FLOAT;   // 单位数据类型是32位的浮点型
-            var normalize = false; // 不需要归一化数据
-            var stride = 0;        // 0 = 移动距离 * 单位距离长度sizeof(type)  每次迭代跳多少距离到下一个数据
-            var offset = 0;        // 从绑定缓冲的起始处开始
+            // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+            var size = 3;          // 3 components per iteration
+            var type = gl.FLOAT;   // the data is 32bit floats
+            var normalize = false; // don't normalize the data
+            var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+            var offset = 0;        // start at the beginning of the buffer
             gl.vertexAttribPointer(
                 positionLocation, size, type, normalize, stride, offset);
 
             // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // 计算矩阵
+            // Compute the matrices
             var matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
             matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
             matrix = m4.xRotate(matrix, rotation[0]);
@@ -176,13 +176,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             matrix = m4.zRotate(matrix, rotation[2]);
             matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
 
-            // 设置矩阵
+            // Set the matrix.
             gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-            // Draw the geometry.
+            // 绘制几何体
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
-            var count = 18;  // 6 triangles in the 'F', 3 points per triangle
+            var count = 16 * 6;
             gl.drawArrays(primitiveType, offset, count);
         }
     }
@@ -190,7 +190,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
     var m4 = {
 
         projection: function (width, height, depth) {
-            // 注意：这个矩阵翻转了 Y 轴，所以 0 在上方
+            // Note: This matrix flips the Y axis so 0 is at the top.
             return [
                 2 / width, 0, 0, 0,
                 0, -2 / height, 0, 0,
@@ -327,13 +327,13 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         },
 
     };
-    // 填充当前 ARRAY_BUFFER 缓冲
-    // 使用组成 'F' 的数据填充缓冲.
+
+    // Fill the buffer with the values that define a letter 'F'.
     function setGeometry(gl) {
         gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array([
-                // 左竖
+                // left column front
                 0, 0, 0,
                 30, 0, 0,
                 0, 150, 0,
@@ -341,7 +341,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 30, 0, 0,
                 30, 150, 0,
 
-                // 上横
+                // top rung front
                 30, 0, 0,
                 100, 0, 0,
                 30, 30, 0,
@@ -349,13 +349,117 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
                 100, 0, 0,
                 100, 30, 0,
 
-                // 下横
+                // middle rung front
                 30, 60, 0,
                 67, 60, 0,
                 30, 90, 0,
                 30, 90, 0,
                 67, 60, 0,
-                67, 90, 0]),
+                67, 90, 0,
+
+                // left column back
+                0, 0, 30,
+                30, 0, 30,
+                0, 150, 30,
+                0, 150, 30,
+                30, 0, 30,
+                30, 150, 30,
+
+                // top rung back
+                30, 0, 30,
+                100, 0, 30,
+                30, 30, 30,
+                30, 30, 30,
+                100, 0, 30,
+                100, 30, 30,
+
+                // middle rung back
+                30, 60, 30,
+                67, 60, 30,
+                30, 90, 30,
+                30, 90, 30,
+                67, 60, 30,
+                67, 90, 30,
+
+                // top
+                0, 0, 0,
+                100, 0, 0,
+                100, 0, 30,
+                0, 0, 0,
+                100, 0, 30,
+                0, 0, 30,
+
+                // top rung right
+                100, 0, 0,
+                100, 30, 0,
+                100, 30, 30,
+                100, 0, 0,
+                100, 30, 30,
+                100, 0, 30,
+
+                // under top rung
+                30, 30, 0,
+                30, 30, 30,
+                100, 30, 30,
+                30, 30, 0,
+                100, 30, 30,
+                100, 30, 0,
+
+                // between top rung and middle
+                30, 30, 0,
+                30, 30, 30,
+                30, 60, 30,
+                30, 30, 0,
+                30, 60, 30,
+                30, 60, 0,
+
+                // top of middle rung
+                30, 60, 0,
+                30, 60, 30,
+                67, 60, 30,
+                30, 60, 0,
+                67, 60, 30,
+                67, 60, 0,
+
+                // right of middle rung
+                67, 60, 0,
+                67, 60, 30,
+                67, 90, 30,
+                67, 60, 0,
+                67, 90, 30,
+                67, 90, 0,
+
+                // bottom of middle rung.
+                30, 90, 0,
+                30, 90, 30,
+                67, 90, 30,
+                30, 90, 0,
+                67, 90, 30,
+                67, 90, 0,
+
+                // right of bottom
+                30, 90, 0,
+                30, 90, 30,
+                30, 150, 30,
+                30, 90, 0,
+                30, 150, 30,
+                30, 150, 0,
+
+                // bottom
+                0, 150, 0,
+                0, 150, 30,
+                30, 150, 30,
+                0, 150, 0,
+                30, 150, 30,
+                30, 150, 0,
+
+                // left side
+                0, 0, 0,
+                0, 0, 30,
+                0, 150, 30,
+                0, 0, 0,
+                0, 150, 30,
+                0, 150, 0]),
             gl.STATIC_DRAW);
     }
 

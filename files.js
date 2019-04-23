@@ -70,12 +70,12 @@ var files = {
         "058webgl-scene-graph-solar-system-adjusted",
         "059webgl-scene-graph-block-guy"
     ],
-    "Geometry":[
+    "Geometry": [
         "060webgl-3d-lathe-step-01",
         "061webgl-3d-lathe-step-02",
         "062webgl-3d-lathe-step-03"
     ],
-    "Textures":[
+    "Textures": [
         "063webgl-3d-textures",
         "064webgl-3d-textures-texture-coords-mapped",
         "065webgl-3d-textures-repeat-clamp",
@@ -93,9 +93,73 @@ var files = {
         "077webgl-perspective-correct-cube",
         "078webgl-non-perspective-correct-cube"
     ],
-    "Rendering To A Texture":[
+    "Rendering To A Texture": [
         "079webgl-render-to-texture",
         "080webgl-render-to-texture-3-cubes-no-depth-buffer",
         "081webgl-render-to-texture-3-cubes-with-depth-buffer"
-    ]
+    ],
+    "Techniques":
+    {
+        "2D": [
+            "webgl-2d-drawimage-01",
+            "webgl-2d-drawimage-02",
+            "webgl-2d-drawimage-03",
+            "webgl-2d-drawimage-04",
+            "webgl-2d-drawimage-05",
+            "webgl-2d-drawimage-06",
+            "webgl-2d-drawimage-07",
+            "webgl-2d-drawimage-08",
+            "webgl-2d-matrixstack-01",
+            "webgl-2d-matrixstack-02",
+            "webgl-2d-matrixstack-03"
+        ],
+        "3D": [
+            "webgl-cubemap-faces",
+            "webgl-cubemap",
+            "webgl-environment-map",
+            "webgl-skybox",
+            "webgl-skybox-plus-environment-map",
+            "webgl-skinning",
+            "webgl-skinning-bone-matrices-in-texture",
+            "webgl-skinning-3d-gltf",
+            "webgl-skinning-3d-gltf-skinned",
+            "webgl-3d-fog-just-mix",
+            "webgl-3d-fog-depth-based",
+            "webgl-3d-fog-depth-based-issue",
+            "webgl-3d-fog-distance-based",
+            "webgl-3d-fog-distance-exp2",
+            "webgl-3d-fog-depth-based-gl_FragCoord"
+        ],
+        "Text": [
+            "webgl-text-html-overlay",
+            "webgl-text-html-overlay-styled",
+            "webgl-text-html-bouncing-div",
+            "webgl-text-html-div",
+            "webgl-text-html-divs",
+            "webgl-text-html-canvas2d",
+            "webgl-text-html-canvas2d-arrows",
+            "webgl-text-texture",
+            "webgl-text-texture-enable-blend",
+            "webgl-text-texture-separate-opaque-from-transparent",
+            "webgl-text-texture-moved-toward-view",
+            "webgl-text-texture-premultiplied-alpha",
+            "webgl-text-texture-consistent-scale",
+            "webgl-text-texture-different-text",
+            "webgl-text-texture-different-colors",
+            "webgl-text-glyphs",
+            "webgl-text-glyphs-texture-atlas"
+        ],
+        "Misc":[
+            "webgl-10x15-canvas-400x300-css",
+            "webgl-resize-canvas",
+            "webgl-resize-canvas-viewport",
+            "webgl-resize-canvas-hd-dpi",
+            "webgl-animation-not-frame-rate-independent",
+            "webgl-animation",
+            "three-js-cube-with-lights",
+            "3d-in-canvas",
+            "3d-in-webgl"
+        ]
+    }
+
 }

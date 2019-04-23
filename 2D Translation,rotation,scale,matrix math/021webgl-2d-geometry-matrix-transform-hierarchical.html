@@ -6,12 +6,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>WebGL - 2D Geometry Matrix Transform</title>
-    <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet" />
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="description">
-        先便宜，再旋转，再缩放
+        Drag sliders to translate, rotate, and scale.
     </div>
     <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-2d-matrices.html" target="_blank">WebGL 二维矩阵</a>
     <canvas id="canvas"></canvas>
@@ -55,7 +55,7 @@ precision mediump float;
 uniform vec4 u_color;
 
 void main() {
-    gl_FragColor = u_color;
+   gl_FragColor = u_color;
 }
 </script>
 <!--
@@ -65,8 +65,8 @@ See http://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
 and http://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
 for webgl-utils, m3, m4, and webgl-lessons-ui.
 -->
-<script src="resources/webgl-utils.js"></script>
-<script src="resources/webgl-lessons-ui.js"></script>
+<script src="../resources/webgl-utils.js"></script>
+<script src="../resources/webgl-lessons-ui.js"></script>
 <script>
     "use strict";
 
@@ -97,9 +97,9 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
         // Put geometry data into buffer
         setGeometry(gl);
 
-        var translation = [100, 150];
+        var translation = [60, 40];
         var angleInRadians = 0;
-        var scale = [1, 1];
+        var scale = [0.85, 0.85];
         var color = [Math.random(), Math.random(), Math.random(), 1];
 
         drawScene();
@@ -138,7 +138,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             // Tell WebGL how to convert from clip space to pixels
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-            // Clear the canvas.
+            // 清空画布
             gl.clear(gl.COLOR_BUFFER_BIT);
 
             // Tell it to use our program (pair of shaders)
@@ -170,22 +170,36 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             var rotationMatrix = m3.rotation(angleInRadians);
             var scaleMatrix = m3.scaling(scale[0], scale[1]);
 
-            // 矩阵相乘
-            var matrix = m3.multiply(translationMatrix, rotationMatrix);
-            matrix = m3.multiply(matrix, scaleMatrix);
+            // 初始矩阵
+            var matrix = m3.identity();
 
-            // 设置矩阵
-            gl.uniformMatrix3fv(matrixLocation, false, matrix);
+            for (var i = 0; i < 5; ++i) {
+                // 矩阵相乘
+                matrix = m3.multiply(matrix, translationMatrix);
+                matrix = m3.multiply(matrix, rotationMatrix);
+                matrix = m3.multiply(matrix, scaleMatrix);
 
-            // 绘制图形
-            var primitiveType = gl.TRIANGLES;
-            var offset = 0;
-            var count = 18;  // 6 triangles in the 'F', 3 points per triangle
-            gl.drawArrays(primitiveType, offset, count);
+                // 设置矩阵
+                gl.uniformMatrix3fv(matrixLocation, false, matrix);
+
+                // 绘制图形
+                var primitiveType = gl.TRIANGLES;
+                var offset = 0;
+                var count = 18;  // 6 triangles in the 'F', 3 points per triangle
+                gl.drawArrays(primitiveType, offset, count);
+            }
         }
     }
 
     var m3 = {
+        identity: function () {
+            return [
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1,
+            ];
+        },
+
         translation: function (tx, ty) {
             return [
                 1, 0, 0,
