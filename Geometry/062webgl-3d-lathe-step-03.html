@@ -4,7 +4,7 @@
     <meta charset="utf8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>WebGL 3D Lathe Compute Normals</title>
-    <link type="text/css" href="resources/webgl-tutorials.css" rel="stylesheet" />
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -143,10 +143,10 @@ See http://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
 and http://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
 for webgl-utils, m3, m4, and webgl-lessons-ui.
 -->
-<script src="resources/webgl-lessons-ui.js"></script>
-<script src="resources/webgl-utils.js"></script>
-<script src="resources/3d-math.js"></script>
-<script src="resources/2d-math.js"></script>
+<script src="../resources/webgl-lessons-ui.js"></script>
+<script src="../resources/webgl-utils.js"></script>
+<script src="../resources/3d-math.js"></script>
+<script src="../resources/2d-math.js"></script>
 <script>
     "use strict";
 
@@ -216,7 +216,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             webglUtils.createProgramInfo(gl, ["simple-vertex-shader", "texture-shader"], attributes),
         ];
 
-        const texInfo = loadImageAndCreateTextureInfo("resources/uv-grid.png", render);
+        const texInfo = loadImageAndCreateTextureInfo("../resources/uv-grid.png", render);
 
         let worldMatrix = m4.identity();
         let projectionMatrix;

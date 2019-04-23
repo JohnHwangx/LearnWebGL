@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>WebGL - 2D Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="resources/webgl-tutorials.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../resources/webgl-tutorials.css">
 </head>
 
 <body>
@@ -55,13 +55,13 @@ void main(){
 }
 </script>
 
-<script src="resources/webgl-utils.js"></script>
+<script src="../resources/webgl-utils.js"></script>
 <script>
     "use strict";
 
     function main() {
         var image = new Image();
-        image.src = "resources/leaves.jpg";  // 必须在同一域名下
+        image.src = "../resources/leaves.jpg";  // 必须在同一域名下
         image.onload = function () {
             render(image);
         };

@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>WebGL - 2D image processing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="resources/webgl-tutorials.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../resources/webgl-tutorials.css">
     <style>
         #ui {
             font-size: x-small;
@@ -92,13 +92,13 @@ void main(){
     gl_FragColor = vec4((colorSum / u_kernelWeight).rgb, 1);
 }
 </script>
-<script src="resources/jquery-1.7.1.min.js"></script>
-<script src="resources/jquery.tablednd_0_5.js"></script>
-<script src="resources/webgl-utils.js"></script>
+<script src="../resources/jquery-1.7.1.min.js"></script>
+<script src="../resources/jquery.tablednd_0_5.js"></script>
+<script src="../resources/webgl-utils.js"></script>
 <script>
     function main() {
         var image = new Image();
-        image.src = "resources/leaves.jpg";
+        image.src = "../resources/leaves.jpg";
         image.onload = function () {
             render(image);
         };
