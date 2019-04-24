@@ -1,22 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Learn WebGl</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
     <style>
-        /* @font-face {
-            font-family: 'inconsolata';
-            src: url('files/inconsolata.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
+        /* a,
+        address,
+        b,
+        big,
+        blockquote,
+        body,
+        center,
+        cite,
+        code,
+        dd,
+        del,
+        div,
+        dl,
+        dt,
+        em,
+        fieldset,
+        font,
+        form,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        html,
+        i,
+        iframe,
+        img,
+        ins,
+        label,
+        legend,
+        li,
+        ol,
+        p,
+        pre,
+        small,
+        span,
+        strong,
+        u,
+        ul,
+        var {
+            padding: 0;
+            margin: 0;
         } */
-
-        * {
-            box-sizing: border-box;
-        }
 
         html {
             height: 100%;
@@ -56,32 +90,109 @@
             text-decoration: none;
         }
 
-        #panel {
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #tab {
             position: fixed;
             left: 0px;
             width: 450px;
             height: 100%;
             overflow: auto;
             background: #fafafa;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 2px #ddd;
         }
 
-        #panel #content {
+        #tab-content #content {
             padding: 0px 20px 20px 20px;
         }
 
-        #panel #content .link {
+        #tab-content #content .link {
             color: #2194CE;
             text-decoration: none;
             cursor: pointer;
             display: block;
         }
 
-        #panel #content .selected {
+        #tab-content #content .selected {
             color: #ff0000;
         }
 
-        #panel #content .link:hover {
+        #tab-content #content .link:hover {
             text-decoration: underline;
+        }
+
+        #tab-content #exercise {
+            padding: 0px 20px 20px 20px;
+        }
+
+        #tab-content #exercise .link {
+            color: #2194CE;
+            text-decoration: none;
+            cursor: pointer;
+            display: block;
+        }
+
+        #tab-content #exercise .selected {
+            color: #ff0000;
+        }
+
+        #tab-content #exercise .link:hover {
+            text-decoration: underline;
+        }
+
+        /*选项卡的头部*/
+        #tab-header {
+            background-color: #F7F7F7;
+            height: 33px;
+            text-align: center;
+            position: relative;
+        }
+
+        #tab-header ul {
+            width: 450px;
+            position: absolute;
+            left: -1px;
+        }
+
+        #tab-header ul li {
+            float: left;
+            width: 98px;
+            height: 33px;
+            line-height: 33px;
+            padding: 0 1px;
+            /* border-bottom: 1px solid #dddddd; */
+        }
+
+        #tab-header ul li.selected {
+            background-color: white;
+            font-weight: bolder;
+            border-bottom: 0;
+            /* border-left: 1px solid #dddddd;
+            border-right: 1px solid #dddddd; */
+            padding: 0;
+
+        }
+
+        #tab-header ul li:hover {
+            color: orangered;
+            cursor: pointer;
+        }
+
+        /*主要内容*/
+        #tab-content .dom {
+            display: none;
+        }
+
+        #tab-content .dom ul li {
+            float: left;
+            /*background-color: red;*/
+            margin: 15px 10px;
+            width: 225px;
         }
 
         #viewer {
@@ -93,36 +204,72 @@
             overflow: auto;
         }
 
-        #panel li b {
-            font-weight: bold;
+        #tab-content .dom ul li a:hover {
+            color: orange;
         }
     </style>
 </head>
 
 <body>
-    <div id="panel">
-        <h1><a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-fundamentals.html">WebGL</a> / examples
-        </h1>
-        <div id="content"></div>
+    <!--选项卡-->
+    <div id="tab">
+        <!--选项的头部-->
+        <div id="tab-header">
+            <ul>
+                <li class="selected">example</li>
+                <li>exercise</li>
+                <!--<li>技术</li>-->
+            </ul>
+        </div>
+        <!--主要内容-->
+        <div id="tab-content">
+            <div class="dom" id="content" style="display: block;">
+            </div>
+            <div class="dom" id="exercise">
+            </div>
+        </div>
     </div>
     <iframe id="viewer" name="viewer" allowfullscreen allowvr onmousewheel=""></iframe>
     <script src="files.js"></script>
-
     <script>
-        function extractQuery() {
-            let p = window.location.search.indexOf('?q=');
-            if (p != -1) {
-                return window.location.search.substr(3);
-            }
-            return '';
+        function $(id) {
+            return typeof id === 'string' ? document.getElementById(id) : id;
         }
 
-        let panel = document.getElementById('panel');
+        // 当页面加载完毕
+        window.onload = function () {
+            // 拿到所有的标题(li标签) 和 标题对应的内容(div)
+            var titles = $('tab-header').getElementsByTagName('li');
+            var divs = $('tab-content').getElementsByClassName('dom');
+            // 判断
+            if (titles.length != divs.length) return;
+            // 遍历
+            for (var i = 0; i < titles.length; i++) {
+                // 取出li标签
+                var li = titles[i];
+                li.id = i;
+                //        console.log(li);
+                // 监听鼠标的移动
+                li.onclick = function () {
+                    for (var j = 0; j < titles.length; j++) {
+                        titles[j].className = '';
+                        divs[j].style.display = 'none';
+                    }
+                    this.className = 'selected';
+                    divs[this.id].style.display = 'block';
+                }
+            }
+        }
+
+        // let panel = document.getElementById('content');
         let content = document.getElementById('content');
+        let exeContent = document.getElementById('exercise');
         let viewer = document.getElementById('viewer');
 
         let container = document.createElement('div');
+        let exeContainer = document.createElement('div');
         content.appendChild(container);
+        exeContent.appendChild(exeContainer);
 
         let links = {};
         let selected = null;
@@ -145,8 +292,9 @@
             return link;
         }
 
-        createFileList(files, 'h2', '');
-        function createFileList(filesList, headTag, subkey) {
+        createFileList(files, container, 'h2', '');
+        createFileList(exercises, exeContainer, 'h2', '');
+        function createFileList(filesList, container, headTag, subkey) {
 
             for (let key in filesList) {
 
@@ -169,7 +317,7 @@
                     }
                 }
                 else if (section instanceof Object) {
-                    createFileList(section, 'h3', key);
+                    createFileList(section, container, 'h3', key);
                 }
             }
         }
@@ -190,19 +338,16 @@
 
             viewer.focus();
 
-            panel.classList.add('collapsed');
+            // panel.classList.add('collapsed');
 
             selected = file;
         }
 
         if (window.location.hash !== '') {
 
-            loadFile(window.location.hash.substring(1).replace(/%20/g,' '));
+            loadFile(window.location.hash.substring(1).replace(/%20/g, ' '));
 
         }
-
-        // updateFilter();
-
     </script>
 </body>
 

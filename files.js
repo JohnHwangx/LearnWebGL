@@ -162,4 +162,20 @@ var files = {
         ]
     }
 
+};
+
+
+var exercises={
+    "Getting Start":[
+        "webgl-hello_triangle",
+        "webgl-hello_triangle_indexed",
+        "webgl-shaders_uniform",
+        "webgl-shaders_interpolation",
+        "webgl-textures",
+        "webgl-textures_combined",
+        "webgl-transformations",
+        "webgl-coordinate_systems",
+        "webgl-coordinate_systems_depth",
+        "webgl-coordinate_systems_multiple"
+    ]
 }
