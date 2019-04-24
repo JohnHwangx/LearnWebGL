@@ -167,15 +167,15 @@ var files = {
 
 var exercises={
     "Getting Start":[
-        "webgl-hello_triangle",
-        "webgl-hello_triangle_indexed",
-        "webgl-shaders_uniform",
-        "webgl-shaders_interpolation",
-        "webgl-textures",
-        "webgl-textures_combined",
-        "webgl-transformations",
-        "webgl-coordinate_systems",
-        "webgl-coordinate_systems_depth",
-        "webgl-coordinate_systems_multiple"
+        "001webgl-hello_triangle",
+        "002webgl-hello_triangle_indexed",
+        "003webgl-shaders_uniform",
+        "004webgl-shaders_interpolation",
+        "005webgl-textures",
+        "006webgl-textures_combined",
+        "007webgl-transformations",
+        "008webgl-coordinate_systems",
+        "009webgl-coordinate_systems_depth",
+        "010webgl-coordinate_systems_multiple"
     ]
 }
