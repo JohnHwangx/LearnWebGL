@@ -285,61 +285,8 @@
 
         if (window.location.hash !== '') {
 
-            loadFile(window.location.hash.substring(1));
+            loadFile(window.location.hash.substring(1).replace(/%20/g,' '));
 
-        }
-
-        function updateFilter() {
-            for (let key in files) {
-                let section = files[key];
-                for (let i = 0; i < section.length; i++) {
-                    filterExample(section[i]);
-                }
-            }
-            layoutList();
-        }
-
-        function filterExample(file) {
-            let link = links[file];
-            let name = getName(file);
-            link.classList.add('filtered');
-            link.innerHTML = name;
-        }
-
-        function getName(file) {
-            let name = file.split('-');
-            name.shift();
-            return name.join(' / ');
-        }
-
-        function layoutList() {
-
-            for (let key in files) {
-
-                let collapsed = true;
-                let section = files[key];
-
-                for (let i = 0; i < section.length; i++) {
-
-                    let file = section[i];
-
-                    if (!links[file].classList.contains('filtered')) {
-                        collapsed = false;
-                        break;
-                    }
-                }
-
-                let element = document.querySelector('h2[data-category="' + key + '"]');
-
-                if (collapsed) {
-
-                    element.classList.add('filtered');
-
-                } else {
-
-                    element.classList.remove('filtered');
-                }
-            }
         }
 
         // updateFilter();
