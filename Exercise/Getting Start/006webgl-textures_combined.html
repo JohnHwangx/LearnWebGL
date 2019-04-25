@@ -34,11 +34,15 @@
     varying vec3 v_color;
     varying vec2 v_texCoord;
 
+    uniform sampler2D u_image0;
     uniform sampler2D u_image1;
-    uniform sampler2D u_image2;
     
     void main(){
-        gl_FragColor = mix(texture2D(u_image1, v_texCoord), texture2D(u_image2, v_texCoord), 0.2);
+        gl_FragColor = mix(texture2D(u_image0, v_texCoord), texture2D(u_image1, v_texCoord), 0.2);
+
+        // vec4 color0 = texture2D(u_image0, v_texCoord);
+        // vec4 color1 = texture2D(u_image1, v_texCoord);
+        // gl_FragColor = color0 * color1;
     }
 </script>
 <!-- <script src="../resources/webglUtils.js"></script> -->
@@ -46,26 +50,46 @@
     "use strict";
 
     import webglUtils from '../resources/webglUtils.js';
-    // const { createProgramFromSecripts } = require('../resources/webglUtils.js');
 
-    function main() {
-        var image = new Image();
-        image.src = "../resources/container.jpg";  // 必须在同一域名下
-        image.onload = function () {
-            render(image);
-        };
+    function loadImage(url, callback) {
+        let image = new Image();
+        image.src = url;
+        image.onload = callback;
+        return image;
     }
 
+    function loadImages(urls, callback) {
+        let images = [];
+        let imagesToLoad = urls.length;
 
+        let onImageLoad = () => {
+            --imagesToLoad;
+            if (imagesToLoad === 0) {
+                callback(images);
+            }
+        };
 
-    function render(image) {
+        for (let ii = 0; ii < imagesToLoad; ++ii) {
+            let image = loadImage(urls[ii], onImageLoad);
+            images.push(image);
+        }
+    }
+
+    function main() {
+        loadImages([
+            "../resources/container.jpg",
+            "../resources/awesomeface.jpg",
+        ], render)
+    }
+
+    function render(images) {
         /** @type {HTMLCanvasElement} */
         let canvas = document.getElementById('canvas');
         let gl = canvas.getContext('webgl');
         if (!gl) {
             return;
         }
-        
+
         let program = webglUtils.createProgramFromSecripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
 
         let positions = [
@@ -100,22 +124,39 @@
         gl.enableVertexAttribArray(textureAttributeLocation);
         gl.vertexAttribPointer(textureAttributeLocation, 2, gl.FLOAT, false, 8 * 4, 6 * 4);
 
-        let texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        let textures = [];
+        for (let ii = 0; ii < 2; ii++) {
+            let texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[ii]);
+            gl.generateMipmap(gl.TEXTURE_2D);
 
+            textures.push(texture);
+        }
+
+        gl.useProgram(program);
+
+        // 寻找取样器的位置
+        var u_image0Location = gl.getUniformLocation(program, "u_image0");
+        var u_image1Location = gl.getUniformLocation(program, "u_image1");
+        // 设置使用的纹理单元
+        gl.uniform1i(u_image0Location, 0);  // 纹理单元 0
+        gl.uniform1i(u_image1Location, 1);  // 纹理单元 1
 
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        gl.useProgram(program);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
 
     }
