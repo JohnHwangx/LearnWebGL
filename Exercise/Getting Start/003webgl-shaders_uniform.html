@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Exercise - Shader Uniform</title>
+    <link rel="stylesheet" href="../resources/webgl-tutorials.css" type="text/css">
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+
+</html>
+<script id="2d-vertex-shader" type="notjs">
+    attribute vec3 a_position;
+    void main(){
+        gl_Position = vec4(a_position, 1.0);
+    }
+</script>
+<script id="2d-fragment-shader" type="notjs">
+
+    precision mediump float;
+
+    uniform vec4 u_color;
+    void main(){
+        gl_FragColor = u_color;
+        // gl_FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+    }
+</script>
+<script>
+    "use strict"
+    function createShader(gl, type, shaderSource) {
+        let shader = gl.createShader(type);
+        gl.shaderSource(shader, shaderSource);
+        gl.compileShader(shader);
+        let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+        if (success) {
+            return shader;
+        }
+        console.log(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+    }
+    function createProgram(gl, vertexShader, fragmentShader) {
+        let program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        let success = gl.getProgramParameter(program, gl.LINK_STATUS);
+        if (success) {
+            return program;
+        }
+        console.log(gl.getProgramInfoLog(program));
+        gl.deleteProgram(program);
+    }
+    function main() {
+        /**@type {HTMLCanvasElement}*/
+        let canvas = document.getElementById("canvas");
+        let gl = canvas.getContext('webgl');
+        if (!gl) {
+            return;
+        }
+        let vertexShaderSource = document.getElementById('2d-vertex-shader').text;
+        let fragmentShaderSource = document.getElementById('2d-fragment-shader').text;
+        let vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+        let fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+        let program = createProgram(gl, vertexShader, fragmentShader);
+
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        let positions = [
+            0.5, -0.5, 0.0,
+            -0.5, -0.5, 0.0,
+            0.0, 0.5, 0.0
+        ];
+        let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+
+        let positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+
+        requestAnimationFrame(drawScene);
+        function drawScene() {
+            gl.clearColor(0.2, 0.3, 0.3, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            gl.useProgram(program);
+
+            let date = new Date();
+            let timeValue = date.getMilliseconds()*0.01;
+            let greenValue = Math.sin(timeValue) / 2.0 + 0.5;
+            let vertexColorLocation = gl.getUniformLocation(program, "u_color");
+            gl.uniform4f(vertexColorLocation, 0.0, greenValue , 0.0, 1.0);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+            requestAnimationFrame(drawScene);
+        }
+    }
+    main();
+</script>
