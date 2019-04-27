@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="800" height="800"></canvas>
 </body>
 
 </html>
@@ -104,7 +104,6 @@
 
         webglUtils.resizeCanvasToDisplaySize(canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        // webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
         let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
         let textureAttributeLocation = gl.getAttribLocation(program, "a_texCoord");

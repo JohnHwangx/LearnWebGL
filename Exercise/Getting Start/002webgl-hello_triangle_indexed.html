@@ -26,9 +26,11 @@
         gl_FragColor = vec4(1, 0.5, 0.2, 1);
     }
 </script>
-<script>
+<script type="module">
     "use strict";
 
+    import webglUtils from '../resources/webglUtils.js';
+    
     function createShader(gl, type, shaderSource) {
         let shader = gl.createShader(type);
         gl.shaderSource(shader, shaderSource);
@@ -68,6 +70,7 @@
         let fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
         let program = createProgram(gl, vertexShader, fragmentShader);
 
+        webglUtils.resizeCanvasToDisplaySize(canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         let positions = [

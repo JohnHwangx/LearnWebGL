@@ -145,5 +145,43 @@ function error(msg) {
     }
 }
 
-export default { createProgramFromSecripts };
+/**
+ * Resize a canvas to match the size its displayed.
+ * @param {HTMLCanvasElement} canvas The canvas to resize.
+ * @param {number} [multiplier] amount to multiply by.
+ *    Pass in window.devicePixelRatio for native pixels.
+ * @return {boolean} true if the canvas was resized.
+ * @memberOf module:webgl-utils
+ */
+function resizeCanvasToDisplaySize(canvas, multiplier) {
+    multiplier = multiplier || 1;
+    var width = canvas.clientWidth * multiplier | 0;
+    var height = canvas.clientHeight * multiplier | 0;
+    if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        return true;
+    }
+    return false;
+}
+
+function resize(gl) {
+    var realToCSSPixels = window.devicePixelRatio;
+
+    // 获取浏览器显示的画布的CSS像素值
+    // 然后计算出设备像素设置drawingbuffer
+    var displayWidth = Math.floor(gl.canvas.clientWidth * realToCSSPixels);
+    var displayHeight = Math.floor(gl.canvas.clientHeight * realToCSSPixels);
+
+    // 检查画布尺寸是否相同
+    if (gl.canvas.width !== displayWidth ||
+        gl.canvas.height !== displayHeight) {
+
+        // 设置为相同的尺寸
+        gl.canvas.width = displayWidth;
+        gl.canvas.height = displayHeight;
+    }
+}
+
+export default { createProgramFromSecripts, resizeCanvasToDisplaySize, resize };
 // exports.createProgramFromSecripts = createProgramFromSecripts;

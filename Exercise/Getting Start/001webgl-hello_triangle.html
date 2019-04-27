@@ -29,8 +29,9 @@
     }
 </script>
 
-<script>
+<script type="module">
     "use strict";
+    import webglUtils from '../resources/webglUtils.js';
 
     function createShader(gl, type, source) {
         let shader = gl.createShader(type);
@@ -78,6 +79,7 @@
             0.0, 0.5, 0.0
         ];
 
+        webglUtils.resizeCanvasToDisplaySize(canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
