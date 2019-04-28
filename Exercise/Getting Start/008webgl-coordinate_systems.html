@@ -10,26 +10,28 @@
 </head>
 
 <body>
-    <canvas id="canvas" width="800" height="800"></canvas>
+    <canvas id="canvas"></canvas>
 </body>
 
 </html>
 <script id="2d-vertex-shader" type="notjs">
     attribute vec3 a_position;
+    attribute vec3 a_color;
     attribute vec2 a_texCoord;
-    
+
+    varying vec3 v_color;
     varying vec2 v_texCoord;
-    
-    uniform mat4 u_matrix;
 
     void main(){
-        gl_Position = u_matrix * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1.0);
-        v_texCoord = a_texCoord;
+        gl_Position = vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1.0);
+        v_color = a_color;
+        v_texCoord=a_texCoord;
     }
 </script>
 <script id="2d-fragment-shader" type="notjs">
 
     precision mediump float;
+    varying vec3 v_color;
     varying vec2 v_texCoord;
 
     uniform sampler2D u_image0;
@@ -92,10 +94,10 @@
         let program = webglUtils.createProgramFromSecripts(gl, ["2d-vertex-shader", "2d-fragment-shader"]);
 
         let positions = [
-            0.5, 0.5, 0.0, 1.0, 1.0,
-            0.5, -0.5, 0.0, 1.0, 0.0,
-            -0.5, -0.5, 0.0, 0.0, 0.0,
-            -0.5, 0.5, 0.0, 0.0, 1.0
+            0.5, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0,
+            0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+            -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0
         ];
         let indices = [
             0, 1, 3,
@@ -106,6 +108,7 @@
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+        let colorAttributeLocation = gl.getAttribLocation(program, "a_color");
         let textureAttributeLocation = gl.getAttribLocation(program, "a_texCoord");
 
         let positionBuffer = gl.createBuffer();
@@ -117,9 +120,11 @@
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
         gl.enableVertexAttribArray(positionAttributeLocation);
-        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 5 * 4, 0);//??stride的值
+        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 8 * 4, 0);//??stride的值
+        gl.enableVertexAttribArray(colorAttributeLocation);
+        gl.vertexAttribPointer(colorAttributeLocation, 3, gl.FLOAT, false, 8 * 4, 3 * 4);
         gl.enableVertexAttribArray(textureAttributeLocation);
-        gl.vertexAttribPointer(textureAttributeLocation, 2, gl.FLOAT, false, 5 * 4, 3 * 4);
+        gl.vertexAttribPointer(textureAttributeLocation, 2, gl.FLOAT, false, 8 * 4, 6 * 4);
 
         let textures = [];
         for (let ii = 0; ii < 2; ii++) {
@@ -139,11 +144,9 @@
 
         gl.useProgram(program);
 
-        let matrixLocation=gl.getUniformLocation(program, "u_matrix");
-
         // 寻找取样器的位置
-        let u_image0Location = gl.getUniformLocation(program, "u_image0");
-        let u_image1Location = gl.getUniformLocation(program, "u_image1");
+        var u_image0Location = gl.getUniformLocation(program, "u_image0");
+        var u_image1Location = gl.getUniformLocation(program, "u_image1");
         // 设置使用的纹理单元
         gl.uniform1i(u_image0Location, 0);  // 纹理单元 0
         gl.uniform1i(u_image1Location, 1);  // 纹理单元 1
@@ -156,29 +159,15 @@
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 
-        // gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+        // 投影
+        let model = m4.identity();
+        model = m4.axisRotate(model, [1, 0, 0], Math.PI * (-55) / 180);
+        let view = m4.identity();
+        view = m4.translate(view, 0, 0, -3);
+        let projection=
 
-        function renderer(time) {
-            time *= 0.001;
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
 
-            gl.clearColor(0.2, 0.3, 0.3, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-
-            gl.useProgram(program);
-
-            let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-            let matrix = m4.scaling(1, aspect, 1);
-            matrix = m4.zRotate(matrix, time);
-            // matrix = m4.scale(matrix, 0.5, 0.5, 1);
-
-            // Set the matrix.
-            gl.uniformMatrix4fv(matrixLocation, false, matrix);
-
-            gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-
-            requestAnimationFrame(renderer);
-        }
-        requestAnimationFrame(renderer);
     }
 
     main();
