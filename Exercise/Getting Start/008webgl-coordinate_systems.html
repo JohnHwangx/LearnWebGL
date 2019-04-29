@@ -16,22 +16,22 @@
 </html>
 <script id="2d-vertex-shader" type="notjs">
     attribute vec3 a_position;
-    attribute vec3 a_color;
     attribute vec2 a_texCoord;
 
-    varying vec3 v_color;
     varying vec2 v_texCoord;
 
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+
     void main(){
-        gl_Position = vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1.0);
-        v_color = a_color;
+        gl_Position = u_projection * u_view * u_model * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1.0);
         v_texCoord=a_texCoord;
     }
 </script>
 <script id="2d-fragment-shader" type="notjs">
 
     precision mediump float;
-    varying vec3 v_color;
     varying vec2 v_texCoord;
 
     uniform sampler2D u_image0;
@@ -145,6 +145,9 @@
         gl.useProgram(program);
 
         // 寻找取样器的位置
+        var modelLocation = gl.getUniformLocation(program, "u_model");
+        var viewLocation = gl.getUniformLocation(program, "u_view");
+        var projectionLocation = gl.getUniformLocation(program, "u_projection");
         var u_image0Location = gl.getUniformLocation(program, "u_image0");
         var u_image1Location = gl.getUniformLocation(program, "u_image1");
         // 设置使用的纹理单元
@@ -164,7 +167,13 @@
         model = m4.axisRotate(model, [1, 0, 0], Math.PI * (-55) / 180);
         let view = m4.identity();
         view = m4.translate(view, 0, 0, -3);
-        let projection=
+
+        var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        let projection = m4.perspective(Math.PI * (45) / 180, aspect, 1, 2000);
+
+        gl.uniformMatrix4fv(modelLocation, false, model);
+        gl.uniformMatrix4fv(viewLocation, false, view);
+        gl.uniformMatrix4fv(projectionLocation, false, projection);
 
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
 

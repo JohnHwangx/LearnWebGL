@@ -273,11 +273,56 @@ function translate(m, tx, ty, tz, dst) {
     return dst;
 }
 
+/**
+  * Computes a 4-by-4 perspective transformation matrix given the angular height
+  * of the frustum, the aspect ratio, and the near and far clipping planes.  The
+  * arguments define a frustum extending in the negative z direction.  The given
+  * angle is the vertical angle of the frustum, and the horizontal angle is
+  * determined to produce the given aspect ratio.  The arguments near and far are
+  * the distances to the near and far clipping planes.  Note that near and far
+  * are not z coordinates, but rather they are distances along the negative
+  * z-axis.  The matrix generated sends the viewing frustum to the unit box.
+  * We assume a unit box extending from -1 to 1 in the x and y dimensions and
+  * from -1 to 1 in the z dimension.
+  * @param {number} fieldOfViewInRadians field of view in y axis.
+  * @param {number} aspect aspect of viewport (width / height)
+  * @param {number} near near Z clipping plane
+  * @param {number} far far Z clipping plane
+  * @param {Matrix4} [dst] optional matrix to store result
+  * @return {Matrix4} dst or a new matrix if none provided
+  * @memberOf module:webgl-3d-math
+  */
+function perspective(fieldOfViewInRadians, aspect, near, far, dst) {
+    dst = dst || new Float32Array(16);
+    var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
+    var rangeInv = 1.0 / (near - far);
+
+    dst[0] = f / aspect;
+    dst[1] = 0;
+    dst[2] = 0;
+    dst[3] = 0;
+    dst[4] = 0;
+    dst[5] = f;
+    dst[6] = 0;
+    dst[7] = 0;
+    dst[8] = 0;
+    dst[9] = 0;
+    dst[10] = (near + far) * rangeInv;
+    dst[11] = -1;
+    dst[12] = 0;
+    dst[13] = 0;
+    dst[14] = near * far * rangeInv * 2;
+    dst[15] = 0;
+
+    return dst;
+}
+
 export default {
     scaling,
     zRotate,
     scale,
     axisRotate,
     identity,
-    translate
+    translate,
+    perspective,
 };
