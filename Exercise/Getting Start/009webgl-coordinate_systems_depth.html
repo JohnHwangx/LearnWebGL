@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Exercise - Coordinate System Depth</title>
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -24,7 +25,7 @@
     uniform mat4 u_projection;
 
     void main(){
-        gl_Position = u_projection * u_view * u_model * vec4(a_position * vec3(0, -1, 0), 1);
+        gl_Position = u_projection * u_view * u_model * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1);
         v_texCoord = a_texCoord;
     }
 </script>
@@ -135,8 +136,10 @@
             -0.5, 0.5, -0.5, 0.0, 1.0
         ];
 
-        webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+        webglUtils.resizeCanvasToDisplaySize(canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        gl.enable(gl.DEPTH_TEST);
 
         let positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
         let positinBuffer = gl.createBuffer();
@@ -182,6 +185,7 @@
 
         function drawScene(time) {
             time *= 0.001;
+
             gl.clearColor(0.2, 0.3, 0.3, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -196,10 +200,10 @@
             let model = m4.identity();
             model = m4.axisRotate(model, [0.5, 1, 0], time);
             let view = m4.identity();
-            view = m4.translate(view, [0, 0, -3]);
-            let projection = m4.identity();
+            view = m4.translate(view, 0, 0, -3);
+
             let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-            projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
+            let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
 
             gl.uniformMatrix4fv(modelLocation, false, model);
             gl.uniformMatrix4fv(viewLocation, false, view);
