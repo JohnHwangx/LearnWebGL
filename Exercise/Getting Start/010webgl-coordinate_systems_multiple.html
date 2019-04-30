@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Exercise - Coordinate System Multiple</title>
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+
+</html>
+<script id="2d-vertex-shader" type="x-shader/x-vertex">
+attribute vec3 a_position;
+attribute vec2 a_texCoord;
+
+varying vec2 v_texCoord;
+
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+
+void main(){
+    gl_Position = u_projection * u_view * u_model * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1);
+    v_texCoord = a_texCoord;
+}
+</script>
+<script id="2d-fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec2 v_texCoord;
+
+uniform sampler2D u_image0;
+uniform sampler2D u_image1;
+
+void main(){
+    gl_FragColor = mix(texture2D(u_image0, v_texCoord), texture2D(u_image1, v_texCoord), 0.2);
+}
+</script>
+<script type="module">
+    "use strict";
+
+    import webglUtils from '../resources/webglUtils.js';
+    import m4 from '../resources/m4.js';
+
+    function loadImage(url, callback) {
+        let image = new Image();
+        image.src = url;
+        image.onload = callback;
+        return image;
+    }
+
+    function loadImages(urls, callback) {
+        let images = [];
+        let imageLength = urls.length;
+
+        let onImageLoad = () => {
+            --imageLength;
+            if (imageLength === 0) {
+                callback(images);
+            }
+        };
+
+        for (let ii = 0; ii < imageLength; ii++) {
+            let image = loadImage(urls[ii], onImageLoad);
+            images.push(image);
+        }
+    }
+
+    function main() {
+
+        loadImages([
+            '../resources/container.jpg',
+            '../resources/awesomeface.jpg',
+        ], render);
+    }
+    /**
+     * 
+     * @param {number[]} images 
+     */
+    function render(images) {
+        /** @type {HTMLCanvasElement} */
+        let canvas = document.getElementById("canvas");
+        let gl = canvas.getContext('webgl');
+        if (!gl) {
+            return;
+        }
+
+        let program = webglUtils.createProgramFromSecripts(gl, ['2d-vertex-shader', '2d-fragment-shader']);
+
+        let vertices = [
+            -0.5, -0.5, -0.5, 0.0, 0.0,
+            0.5, -0.5, -0.5, 1.0, 0.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            -0.5, 0.5, -0.5, 0.0, 1.0,
+            -0.5, -0.5, -0.5, 0.0, 0.0,
+
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+            0.5, -0.5, 0.5, 1.0, 0.0,
+            0.5, 0.5, 0.5, 1.0, 1.0,
+            0.5, 0.5, 0.5, 1.0, 1.0,
+            -0.5, 0.5, 0.5, 0.0, 1.0,
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+
+            -0.5, 0.5, 0.5, 1.0, 0.0,
+            -0.5, 0.5, -0.5, 1.0, 1.0,
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+            -0.5, 0.5, 0.5, 1.0, 0.0,
+
+            0.5, 0.5, 0.5, 1.0, 0.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            0.5, -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, 0.5, 0.0, 0.0,
+            0.5, 0.5, 0.5, 1.0, 0.0,
+
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, -0.5, 1.0, 1.0,
+            0.5, -0.5, 0.5, 1.0, 0.0,
+            0.5, -0.5, 0.5, 1.0, 0.0,
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+
+            -0.5, 0.5, -0.5, 0.0, 1.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            0.5, 0.5, 0.5, 1.0, 0.0,
+            0.5, 0.5, 0.5, 1.0, 0.0,
+            -0.5, 0.5, 0.5, 0.0, 0.0,
+            -0.5, 0.5, -0.5, 0.0, 1.0
+        ];
+
+        // world space positions of our cubes
+        let cubePositions = [
+            [0.0, 0.0, 0.0],
+            [2.0, 5.0, -15.0],
+            [-1.5, -2.2, -2.5],
+            [-3.8, -2.0, -12.3],
+            [2.4, -0.4, -3.5],
+            [-1.7, 3.0, -7.5],
+            [1.3, -2.0, -2.5],
+            [1.5, 2.0, -2.5],
+            [1.5, 0.2, -1.5],
+            [-1.3, 1.0, -1.5]
+        ];
+
+        webglUtils.resizeCanvasToDisplaySize(canvas);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        gl.enable(gl.DEPTH_TEST);
+
+        let positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+        let positinBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positinBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 5 * 4, 0);
+
+        let textureAttributeLocation = gl.getAttribLocation(program, 'a_texCoord');
+        let textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(textureAttributeLocation);
+        gl.vertexAttribPointer(textureAttributeLocation, 2, gl.FLOAT, false, 5 * 4, 3 * 4);
+
+        let imageLength = images.length;
+        let textures = [];
+        for (let ii = 0; ii < imageLength; ii++) {
+            let texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[ii]);
+            gl.generateMipmap(gl.TEXTURE_2D);
+
+            textures.push(texture);
+        }
+
+        gl.useProgram(program);
+
+        let image0Location = gl.getUniformLocation(program, 'u_image0');
+        let image1Location = gl.getUniformLocation(program, 'u_image1');
+        gl.uniform1i(image0Location, 0);
+        gl.uniform1i(image1Location, 1);
+
+        let modelLocation = gl.getUniformLocation(program, 'u_model');
+        let viewLocation = gl.getUniformLocation(program, 'u_view');
+        let projectionLocation = gl.getUniformLocation(program, 'u_projection');
+
+        gl.clearColor(0.2, 0.3, 0.3, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+
+        let view = m4.identity();
+        view = m4.translate(view, 0, 0, -3);
+        
+        let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
+
+        gl.uniformMatrix4fv(viewLocation, false, view);
+        gl.uniformMatrix4fv(projectionLocation, false, projection);
+
+        for (let ii = 0; ii < 10; ii++) {
+            let model = m4.identity();
+            model = m4.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
+
+            let angle = 20 * ii;
+            model = m4.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
+
+            gl.uniformMatrix4fv(modelLocation, false, model);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+        }
+
+    }
+
+    main();
+</script>

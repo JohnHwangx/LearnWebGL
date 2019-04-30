@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Exercise - Coordinate System Depth</title>
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+
+</html>
+<script id="2d-vertex-shader" type="x-shader/x-vertex">
+    attribute vec3 a_position;
+    attribute vec2 a_texCoord;
+
+    varying vec2 v_texCoord;
+
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+
+    void main(){
+        gl_Position = u_projection * u_view * u_model * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1);
+        v_texCoord = a_texCoord;
+    }
+</script>
+<script id="2d-fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec2 v_texCoord;
+
+    uniform sampler2D u_image0;
+    uniform sampler2D u_image1;
+
+    void main(){
+        gl_FragColor = mix(texture2D(u_image0, v_texCoord), texture2D(u_image1, v_texCoord), 0.2);
+    }
+</script>
+<script type="module">
+
+</script>

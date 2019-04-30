@@ -176,6 +176,9 @@ var exercises={
         "007webgl-transformations",
         "008webgl-coordinate_systems",
         "009webgl-coordinate_systems_depth",
-        "010webgl-coordinate_systems_multiple"
+        "010webgl-coordinate_systems_multiple",
+        "011webgl-camera_circle",
+        "012webgl-camera_keyboard_dt",
+        "013webgl-camera_mouse_zoom",
     ]
 }
