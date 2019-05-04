@@ -89,15 +89,16 @@
         gl.enableVertexAttribArray(positionAttributeLocation);
 
         requestAnimationFrame(drawScene);
-        function drawScene() {
+        function drawScene(time) {
+            time*=0.001;
             gl.clearColor(0.2, 0.3, 0.3, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
 
             gl.useProgram(program);
 
             let date = new Date();
-            let timeValue = date.getMilliseconds()*0.01;
-            let greenValue = Math.sin(timeValue) / 2.0 + 0.5;
+            // let timeValue = date.getMilliseconds()*0.01;
+            let greenValue = Math.sin(time) / 2.0 + 0.5;
             let vertexColorLocation = gl.getUniformLocation(program, "u_color");
             gl.uniform4f(vertexColorLocation, 0.0, greenValue , 0.0, 1.0);
 

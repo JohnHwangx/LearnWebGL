@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Exercise - Coordinate System Depth</title>
+    <title>Exercise - Camera Keyboard Dt</title>
     <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
@@ -27,7 +27,7 @@
     void main(){
         gl_Position = u_projection * u_view * u_model * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1);
         v_texCoord = a_texCoord;
-    }
+    } 
 </script>
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
     precision mediump float;
@@ -42,6 +42,7 @@
     }
 </script>
 <script type="module">
+
     "use strict";
 
     import webglUtils from '../resources/webglUtils.js';
@@ -78,6 +79,21 @@
             '../resources/awesomeface.jpg',
         ], render);
     }
+
+    document.onkeydown = (event) => {
+        /**@type {KeyboardEvent} */
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        if (e && e.keyCode == 87) { // 按 W 
+            console.log('wwwww');
+        } else if (e && e.keyCode == 83) { // 按 S 
+            console.log('sssss');
+        } else if (e && e.keyCode == 65) { // A
+            console.log('aaaaa');
+        } else if (e && e.keyCode == 68) { // D
+            console.log('ddddd');
+        }
+    }
+    
     /**
      * 
      * @param {number[]} images 
@@ -197,49 +213,35 @@
         let viewLocation = gl.getUniformLocation(program, 'u_view');
         let projectionLocation = gl.getUniformLocation(program, 'u_projection');
 
-        function drawScene(time) {
-            time *= 0.001;
+        gl.clearColor(0.2, 0.3, 0.3, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            gl.clearColor(0.2, 0.3, 0.3, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 
-            gl.useProgram(program);
+        let view = m4.identity();
+        view = m4.translate(view, 0, 0, -3);
 
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, textures[0]);
-            gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+        let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
 
-            let radius = 10.0;
-            let camX = Math.sin(time) * radius;
-            let camZ = Math.cos(time) * radius;
-            let view = m4.lookAt([camX, 0, camZ], [0, 0, 0], [0, 1, 0]);
+        gl.uniformMatrix4fv(viewLocation, false, view);
+        gl.uniformMatrix4fv(projectionLocation, false, projection);
 
-            // let view = m4.identity();
-            // view = m4.axisRotate(view, [0, 1, 0], time);
-            // view = m4.translate(view, 0, 0, radius);
-            view = m4.inverse(view);
+        for (let ii = 0; ii < 10; ii++) {
+            let model = m4.identity();
+            model = m4.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
 
-            let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-            let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
-            gl.uniformMatrix4fv(viewLocation, false, view);
-            gl.uniformMatrix4fv(projectionLocation, false, projection);
+            let angle = 20 * ii;
+            model = m4.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
 
-            for (let ii = 0; ii < 10; ii++) {
-                let model = m4.identity();
-                model = m4.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
+            gl.uniformMatrix4fv(modelLocation, false, model);
 
-                let angle = 20 * ii;
-                model = m4.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
-
-                gl.uniformMatrix4fv(modelLocation, false, model);
-
-                gl.drawArrays(gl.TRIANGLES, 0, 36);
-            }
-
-            requestAnimationFrame(drawScene);
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
         }
-        requestAnimationFrame(drawScene);
+
     }
 
     main();
