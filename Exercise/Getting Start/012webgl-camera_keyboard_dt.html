@@ -48,6 +48,12 @@
     import webglUtils from '../resources/webglUtils.js';
     import m4 from '../resources/m4.js';
 
+    let cameraPosition = [0, 0, 3];
+    let cameraFront = [0, 0, -1];
+    let cameraUp = [0, 1, 0];
+    let deltaTime = 0;
+    let lastFrame = 0;
+
     function loadImage(url, callback) {
         let image = new Image();
         image.src = url;
@@ -83,17 +89,30 @@
     document.onkeydown = (event) => {
         /**@type {KeyboardEvent} */
         var e = event || window.event || arguments.callee.caller.arguments[0];
+        let cameraSpeed = 2.5 * deltaTime;
         if (e && e.keyCode == 87) { // 按 W 
+            cameraPosition[0] += cameraSpeed * cameraFront[0];
+            cameraPosition[1] += cameraSpeed * cameraFront[1];
+            cameraPosition[2] += cameraSpeed * cameraFront[2];
             console.log('wwwww');
         } else if (e && e.keyCode == 83) { // 按 S 
+            cameraPosition[0] -= cameraSpeed * cameraFront[0];
+            cameraPosition[1] -= cameraSpeed * cameraFront[1];
+            cameraPosition[2] -= cameraSpeed * cameraFront[2];
             console.log('sssss');
         } else if (e && e.keyCode == 65) { // A
             console.log('aaaaa');
+            cameraPosition[0] -= m4.normalize(m4.cross(cameraFront, cameraUp))[0] * cameraSpeed;
+            cameraPosition[1] -= m4.normalize(m4.cross(cameraFront, cameraUp))[1] * cameraSpeed;
+            cameraPosition[2] -= m4.normalize(m4.cross(cameraFront, cameraUp))[2] * cameraSpeed;
         } else if (e && e.keyCode == 68) { // D
             console.log('ddddd');
+            cameraPosition[0] += m4.normalize(m4.cross(cameraFront, cameraUp))[0] * cameraSpeed;
+            cameraPosition[1] += m4.normalize(m4.cross(cameraFront, cameraUp))[1] * cameraSpeed;
+            cameraPosition[2] += m4.normalize(m4.cross(cameraFront, cameraUp))[2] * cameraSpeed;
         }
     }
-    
+
     /**
      * 
      * @param {number[]} images 
@@ -213,35 +232,55 @@
         let viewLocation = gl.getUniformLocation(program, 'u_view');
         let projectionLocation = gl.getUniformLocation(program, 'u_projection');
 
-        gl.clearColor(0.2, 0.3, 0.3, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        function drawScene(time) {
+            let currentFrame = time;
+            deltaTime = (currentFrame - lastFrame) * 0.001;
+            lastFrame = currentFrame;
+            //time *= 0.001;
 
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, textures[0]);
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+            gl.clearColor(0.2, 0.3, 0.3, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        let view = m4.identity();
-        view = m4.translate(view, 0, 0, -3);
+            gl.useProgram(program);
 
-        let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-        let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 
-        gl.uniformMatrix4fv(viewLocation, false, view);
-        gl.uniformMatrix4fv(projectionLocation, false, projection);
+            // let radius = 10.0;
+            // let camX = Math.sin(time) * radius;
+            // let camZ = Math.cos(time) * radius;
+            let center = [cameraPosition[0] + cameraFront[0], cameraPosition[1] + cameraFront[1], cameraPosition[2] + cameraFront[2]]
+            let view = m4.lookAt(cameraPosition, center, cameraUp);
 
-        for (let ii = 0; ii < 10; ii++) {
-            let model = m4.identity();
-            model = m4.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
+            console.log(cameraPosition + ' ' + currentFrame);
 
-            let angle = 20 * ii;
-            model = m4.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
+            // let view = m4.identity();
+            // view = m4.axisRotate(view, [0, 1, 0], time);
+            // view = m4.translate(view, 0, 0, radius);
+            view = m4.inverse(view);
 
-            gl.uniformMatrix4fv(modelLocation, false, model);
+            let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
+            gl.uniformMatrix4fv(viewLocation, false, view);
+            gl.uniformMatrix4fv(projectionLocation, false, projection);
 
-            gl.drawArrays(gl.TRIANGLES, 0, 36);
+            for (let ii = 0; ii < 10; ii++) {
+                let model = m4.identity();
+                model = m4.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
+
+                let angle = 20 * ii;
+                model = m4.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
+
+                gl.uniformMatrix4fv(modelLocation, false, model);
+
+                gl.drawArrays(gl.TRIANGLES, 0, 36);
+            }
+
+            requestAnimationFrame(drawScene);
         }
-
+        requestAnimationFrame(drawScene);
     }
 
     main();

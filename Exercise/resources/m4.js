@@ -580,4 +580,6 @@ export default {
     lookAt,
     inverse,
     lookAtGlm,
+    normalize,
+    cross,
 };
