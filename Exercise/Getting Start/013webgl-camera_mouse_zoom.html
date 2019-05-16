@@ -50,17 +50,46 @@
 <script type="module">
     "use strict"
     let canvas = document.getElementById('canvas');
-    console.log("hello world");
+    let startdom = document.createElement('div');
+    startdom.style.position = 'absolute';
+    startdom.style.color = '#ffff00';
+    startdom.style.visibility = 'visible';
+    document.body.appendChild(startdom);
+
+    let lastdom = document.createElement('div');
+    lastdom.style.position = 'absolute';
+    lastdom.style.color = '#000000';
+    lastdom.style.visibility = 'visible';
+    document.body.appendChild(lastdom);
+
+    let lastX = canvas.clientWidth / 2;
+    let lastY = canvas.clientHeight / 2;
 
     canvas.onmousedown = (e) => {
-        let dom = document.createElement('div');
-        dom.style.position = 'absolute';
-        dom.style.color = '#ffff00';
-        dom.innerHTML = ("(" + e.clientX + " " + e.clientY + ")");
-        dom.style.left = e.clientX + 'px';
-        dom.style.top = e.clientY + 'px';
-        dom.style.visibility = 'visible';
-        document.body.appendChild(dom);
+
+        // startdom.innerHTML = ("(" + e.clientX + " " + e.clientY + ")");
+        // startdom.style.left = e.clientX + 'px';
+        // startdom.style.top = e.clientY + 'px';
         //console.log("x:" + e.screenX + " y:" + e.screenY);
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+    }
+
+    canvas.onmouseup = (e) => {
+
+        //if(last)
+        // lastdom.innerHTML = ("(" + e.clientX + " " + e.clientY + ")");
+        // lastdom.style.left = e.clientX + 'px';
+        // lastdom.style.top = e.clientY + 'px';
+        //console.log("x:" + e.screenX + " y:" + e.screenY);
+
+        let offsetX = e.clientX - lastX;
+        let offsetY = lastY - e.clientY;
+
+        lastdom.innerHTML = ("(" + offsetX + " " + offsetY + ")");
+        lastdom.style.left = e.clientX + 'px';
+        lastdom.style.top = e.clientY + 'px';
+
     }
 </script>
