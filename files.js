@@ -180,5 +180,8 @@ var exercises={
         "011webgl-camera_circle",
         "012webgl-camera_keyboard_dt",
         "013webgl-camera_mouse_zoom",
+    ],
+    "Light":[
+        "014webgl-colors.html",
     ]
 }

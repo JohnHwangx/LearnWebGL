@@ -44,7 +44,7 @@ void main(){
     "use strict";
 
     import webglUtils from '../resources/webglUtils.js';
-    import m4 from '../resources/m4.js';
+    import glm from '../resources/glm.js';
 
     function loadImage(url, callback) {
         let image = new Image();
@@ -204,21 +204,21 @@ void main(){
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, textures[1]);
 
-        let view = m4.identity();
-        view = m4.translate(view, 0, 0, -3);
+        let view = glm.identity();
+        view = glm.translate(view, 0, 0, -3);
         
         let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-        let projection = m4.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
+        let projection = glm.perspective(Math.PI * 45 / 180, aspect, 1, 2000);
 
         gl.uniformMatrix4fv(viewLocation, false, view);
         gl.uniformMatrix4fv(projectionLocation, false, projection);
 
         for (let ii = 0; ii < 10; ii++) {
-            let model = m4.identity();
-            model = m4.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
+            let model = glm.identity();
+            model = glm.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
 
             let angle = 20 * ii;
-            model = m4.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
+            model = glm.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
 
             gl.uniformMatrix4fv(modelLocation, false, model);
 

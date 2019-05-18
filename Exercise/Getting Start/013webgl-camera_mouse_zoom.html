@@ -6,13 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Exercise - Camera Mouse Zoom</title>
-    <style>
-        #canvas {
-            width: 100%;
-            height: 100%;
-            background-color: aqua
-        }
-    </style>
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -48,48 +42,298 @@
     }
 </script>
 <script type="module">
-    "use strict"
-    let canvas = document.getElementById('canvas');
-    let startdom = document.createElement('div');
-    startdom.style.position = 'absolute';
-    startdom.style.color = '#ffff00';
-    startdom.style.visibility = 'visible';
-    document.body.appendChild(startdom);
+    "use strict";
 
-    let lastdom = document.createElement('div');
-    lastdom.style.position = 'absolute';
-    lastdom.style.color = '#000000';
-    lastdom.style.visibility = 'visible';
-    document.body.appendChild(lastdom);
+    import webglUtils from '../resources/webglUtils.js';
+    import glm from '../resources/glm.js';
 
-    let lastX = canvas.clientWidth / 2;
-    let lastY = canvas.clientHeight / 2;
+    let cameraPosition = [0, 0, 3];
+    let cameraFront = [0, 0, -1];
+    let cameraUp = [0, 1, 0];
+    let deltaTime = 0;
+    let lastFrame = 0;
 
-    canvas.onmousedown = (e) => {
+    let lastX, lastY;
+    let yaw = -90;
+    let pitch = 0;
+    let fov = 45;
 
-        // startdom.innerHTML = ("(" + e.clientX + " " + e.clientY + ")");
-        // startdom.style.left = e.clientX + 'px';
-        // startdom.style.top = e.clientY + 'px';
-        //console.log("x:" + e.screenX + " y:" + e.screenY);
-
-        lastX = e.clientX;
-        lastY = e.clientY;
+    function loadImage(url, callback) {
+        let image = new Image();
+        image.src = url;
+        image.onload = callback;
+        return image;
     }
 
-    canvas.onmouseup = (e) => {
+    function loadImages(urls, callback) {
+        let images = [];
+        let imageLength = urls.length;
 
-        //if(last)
-        // lastdom.innerHTML = ("(" + e.clientX + " " + e.clientY + ")");
-        // lastdom.style.left = e.clientX + 'px';
-        // lastdom.style.top = e.clientY + 'px';
-        //console.log("x:" + e.screenX + " y:" + e.screenY);
+        let onImageLoad = () => {
+            --imageLength;
+            if (imageLength === 0) {
+                callback(images);
+            }
+        };
 
-        let offsetX = e.clientX - lastX;
-        let offsetY = lastY - e.clientY;
-
-        lastdom.innerHTML = ("(" + offsetX + " " + offsetY + ")");
-        lastdom.style.left = e.clientX + 'px';
-        lastdom.style.top = e.clientY + 'px';
-
+        for (let ii = 0; ii < imageLength; ii++) {
+            let image = loadImage(urls[ii], onImageLoad);
+            images.push(image);
+        }
     }
+
+    function main() {
+
+        loadImages([
+            '../resources/container.jpg',
+            '../resources/awesomeface.jpg',
+        ], render);
+    }
+
+    /**
+     * 
+     * @param {number[]} images 
+     */
+    function render(images) {
+        /** @type {HTMLCanvasElement} */
+        let canvas = document.getElementById("canvas");
+
+        document.onkeydown = (event) => {
+            /**@type {KeyboardEvent} */
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            let cameraSpeed = 2.5 * deltaTime;
+            if (e && e.keyCode == 87) { // 按 W 
+                cameraPosition[0] += cameraSpeed * cameraFront[0];
+                cameraPosition[1] += cameraSpeed * cameraFront[1];
+                cameraPosition[2] += cameraSpeed * cameraFront[2];
+                // console.log('wwwww');
+            } else if (e && e.keyCode == 83) { // 按 S 
+                cameraPosition[0] -= cameraSpeed * cameraFront[0];
+                cameraPosition[1] -= cameraSpeed * cameraFront[1];
+                cameraPosition[2] -= cameraSpeed * cameraFront[2];
+                // console.log('sssss');
+            } else if (e && e.keyCode == 65) { // A
+                // console.log('aaaaa');
+                cameraPosition[0] -= glm.normalize(glm.cross(cameraFront, cameraUp))[0] * cameraSpeed;
+                cameraPosition[1] -= glm.normalize(glm.cross(cameraFront, cameraUp))[1] * cameraSpeed;
+                cameraPosition[2] -= glm.normalize(glm.cross(cameraFront, cameraUp))[2] * cameraSpeed;
+            } else if (e && e.keyCode == 68) { // D
+                // console.log('ddddd');
+                cameraPosition[0] += glm.normalize(glm.cross(cameraFront, cameraUp))[0] * cameraSpeed;
+                cameraPosition[1] += glm.normalize(glm.cross(cameraFront, cameraUp))[1] * cameraSpeed;
+                cameraPosition[2] += glm.normalize(glm.cross(cameraFront, cameraUp))[2] * cameraSpeed;
+            }
+            drawScene();
+        }
+
+        canvas.onmousedown = (e) => {
+            lastX = e.clientX;
+            lastY = e.clientY;
+            fndown(e);
+        }
+        /**@param {MouseEvent} event */
+        function fndown(event) {
+            canvas.onmousemove = (e) => {
+                let offsetX = e.clientX - lastX;
+                let offsetY = lastY - e.clientY;
+
+                lastX = e.clientX;
+                lastY = e.clientY;
+
+                // lastdom.innerHTML = ("(" + offsetX + " " + offsetY + ")");
+                let sensitivity = 0.1;
+                offsetX *= sensitivity;
+                offsetY *= sensitivity
+                yaw += offsetX;
+                pitch += offsetY;
+
+                let x = Math.cos(glm.radians(yaw)) * Math.cos(glm.radians(pitch));
+                let y = Math.sin(glm.radians(pitch));
+                let z = Math.sin(glm.radians(yaw)) * Math.cos(glm.radians(pitch));
+                cameraFront = glm.normalize([x, y, z]);
+                drawScene();
+                console.log("ondrag");
+            }
+            canvas.onmouseup = (e) => {
+                canvas.onmousemove = null;
+                console.log("up");
+            }
+        }
+
+        canvas.onwheel = (e) => {
+            let offsetY = e.deltaY * 0.1;
+            if (fov >= 1.0 && fov <= 45.0)
+                fov += offsetY;
+            if (fov <= 1.0)
+                fov = 1.0;
+            if (fov >= 45.0)
+                fov = 45.0;
+            drawScene();
+        }
+
+        let gl = canvas.getContext('webgl');
+        if (!gl) {
+            return;
+        }
+
+        let program = webglUtils.createProgramFromSecripts(gl, ['2d-vertex-shader', '2d-fragment-shader']);
+
+        let vertices = [
+            -0.5, -0.5, -0.5, 0.0, 0.0,
+            0.5, -0.5, -0.5, 1.0, 0.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            -0.5, 0.5, -0.5, 0.0, 1.0,
+            -0.5, -0.5, -0.5, 0.0, 0.0,
+
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+            0.5, -0.5, 0.5, 1.0, 0.0,
+            0.5, 0.5, 0.5, 1.0, 1.0,
+            0.5, 0.5, 0.5, 1.0, 1.0,
+            -0.5, 0.5, 0.5, 0.0, 1.0,
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+
+            -0.5, 0.5, 0.5, 1.0, 0.0,
+            -0.5, 0.5, -0.5, 1.0, 1.0,
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+            -0.5, 0.5, 0.5, 1.0, 0.0,
+
+            0.5, 0.5, 0.5, 1.0, 0.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            0.5, -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, 0.5, 0.0, 0.0,
+            0.5, 0.5, 0.5, 1.0, 0.0,
+
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+            0.5, -0.5, -0.5, 1.0, 1.0,
+            0.5, -0.5, 0.5, 1.0, 0.0,
+            0.5, -0.5, 0.5, 1.0, 0.0,
+            -0.5, -0.5, 0.5, 0.0, 0.0,
+            -0.5, -0.5, -0.5, 0.0, 1.0,
+
+            -0.5, 0.5, -0.5, 0.0, 1.0,
+            0.5, 0.5, -0.5, 1.0, 1.0,
+            0.5, 0.5, 0.5, 1.0, 0.0,
+            0.5, 0.5, 0.5, 1.0, 0.0,
+            -0.5, 0.5, 0.5, 0.0, 0.0,
+            -0.5, 0.5, -0.5, 0.0, 1.0
+        ];
+
+        // world space positions of our cubes
+        let cubePositions = [
+            [0.0, 0.0, 0.0],
+            [2.0, 5.0, -15.0],
+            [-1.5, -2.2, -2.5],
+            [-3.8, -2.0, -12.3],
+            [2.4, -0.4, -3.5],
+            [-1.7, 3.0, -7.5],
+            [1.3, -2.0, -2.5],
+            [1.5, 2.0, -2.5],
+            [1.5, 0.2, -1.5],
+            [-1.3, 1.0, -1.5]
+        ];
+
+        webglUtils.resizeCanvasToDisplaySize(canvas);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        gl.enable(gl.DEPTH_TEST);
+
+        let positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+        let positinBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positinBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 5 * 4, 0);
+
+        let textureAttributeLocation = gl.getAttribLocation(program, 'a_texCoord');
+        let textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(textureAttributeLocation);
+        gl.vertexAttribPointer(textureAttributeLocation, 2, gl.FLOAT, false, 5 * 4, 3 * 4);
+
+        let imageLength = images.length;
+        let textures = [];
+        for (let ii = 0; ii < imageLength; ii++) {
+            let texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images[ii]);
+            gl.generateMipmap(gl.TEXTURE_2D);
+
+            textures.push(texture);
+        }
+
+        gl.useProgram(program);
+
+        let image0Location = gl.getUniformLocation(program, 'u_image0');
+        let image1Location = gl.getUniformLocation(program, 'u_image1');
+        gl.uniform1i(image0Location, 0);
+        gl.uniform1i(image1Location, 1);
+
+        let modelLocation = gl.getUniformLocation(program, 'u_model');
+        let viewLocation = gl.getUniformLocation(program, 'u_view');
+        let projectionLocation = gl.getUniformLocation(program, 'u_projection');
+
+        function drawScene() {
+
+            gl.clearColor(0.2, 0.3, 0.3, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            gl.useProgram(program);
+
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+
+            let center = [cameraPosition[0] + cameraFront[0], cameraPosition[1] + cameraFront[1], cameraPosition[2] + cameraFront[2]]
+            let view = glm.lookAt(cameraPosition, center, cameraUp);
+
+            console.log(cameraPosition);
+
+            // let view = m4.identity();
+            // view = m4.axisRotate(view, [0, 1, 0], time);
+            // view = m4.translate(view, 0, 0, radius);
+            view = glm.inverse(view);
+
+            let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            let projection = glm.perspective(Math.PI * fov / 180, aspect, 1, 2000);
+            gl.uniformMatrix4fv(viewLocation, false, view);
+            gl.uniformMatrix4fv(projectionLocation, false, projection);
+
+            for (let ii = 0; ii < 10; ii++) {
+                let model = glm.identity();
+                model = glm.translate(model, cubePositions[ii][0], cubePositions[ii][1], cubePositions[ii][2]);
+
+                let angle = 20 * ii;
+                model = glm.axisRotate(model, [1, 0.3, 0.5], angle * Math.PI / 180);
+
+                gl.uniformMatrix4fv(modelLocation, false, model);
+
+                gl.drawArrays(gl.TRIANGLES, 0, 36);
+            }
+        }
+
+        function getTime(time) {
+
+            let currentFrame = time;
+            deltaTime = (currentFrame - lastFrame) * 0.001;
+            lastFrame = currentFrame;
+
+            requestAnimationFrame(getTime);
+        }
+        drawScene();
+        requestAnimationFrame(getTime);
+    }
+
+    main();
 </script>

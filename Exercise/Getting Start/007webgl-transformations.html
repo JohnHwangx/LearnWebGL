@@ -48,7 +48,7 @@
     "use strict";
 
     import webglUtils from '../resources/webglUtils.js';
-    import m4 from '../resources/m4.js';
+    import glm from '../resources/glm.js';
 
     function loadImage(url, callback) {
         let image = new Image();
@@ -168,9 +168,9 @@
             gl.useProgram(program);
 
             let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-            let matrix = m4.scaling(1, aspect, 1);
-            matrix = m4.zRotate(matrix, time);
-            // matrix = m4.scale(matrix, 0.5, 0.5, 1);
+            let matrix = glm.scaling(1, aspect, 1);
+            matrix = glm.zRotate(matrix, time);
+            // matrix = glm.scale(matrix, 0.5, 0.5, 1);
 
             // Set the matrix.
             gl.uniformMatrix4fv(matrixLocation, false, matrix);

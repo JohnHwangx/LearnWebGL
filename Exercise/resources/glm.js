@@ -427,7 +427,7 @@ function dot(a, b) {
 
 /**
   * normalizes a vector.
-  * @param {Vector3} v vector to normalzie
+  * @param {Number[]} v vector to normalzie
   * @param {Vector3} dst optional vector3 to store result
   * @return {Vector3} dst or new Vector3 if not provided
   * @memberOf module:webgl-3d-math
@@ -569,6 +569,10 @@ function inverse(m, dst) {
     return dst;
 }
 
+function radians(angle){
+    return angle * Math.PI / 180
+}
+
 export default {
     scaling,
     zRotate,
@@ -582,4 +586,5 @@ export default {
     lookAtGlm,
     normalize,
     cross,
+    radians,
 };
