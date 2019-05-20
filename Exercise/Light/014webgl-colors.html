@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Exercise - Colors</title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+</html>
+<script id="color-veretx-shader" type="x-shaedr/x-vertex">
+atteibute vec3 a_position;
+
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+
+void main(){
+    gl_Position = u_projection * u_view * u_model * vec4(a_position.x, (-1.0) * a_position.y, a_position.z, 1);
+}
+</script>
+<script id="color-fragment-shader" type="x-shader/x-fragment">
+uniform vec3 objectColor;
+uniform vec3 lightColor;
+
+void main(){
+    gl_FragColor = vec4(lightColor * objectColor, 1);
+}
+</script>
+<script id="lamp-vertex-shader" type="x-shader/x-vertex">
+
+</script>
+<script id="lamp-fragment-shader" type="x-shader/x-fragment">
+
+</script>
