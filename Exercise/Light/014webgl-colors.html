@@ -43,11 +43,114 @@ void main(){
     gl_Position=u_projection * u_view * u_model * vec4(a_position * vec3(1, -1, 1), 1);
 }
 </script>
-<script id="lamp-fragment-shader" type="x-shader/x-fragment">    
+<script id="lamp-fragment-shader" type="x-shader/x-fragment">
     void main(){
         gl_FragColor = vec4(1);
     }
 </script>
 <script type="module">
+    "use strict"
+
+    import webglUtils from "../resources/webglUtils";
+    import glm from "../resources/glm";
+
+    function main() {
+
+        /**@type {HTMLCanvasElement} */
+        let canvas = document.getElementById("canvas");
+        let gl = canvas.getContext("webgl");
+
+        let lightingShader = webglUtils.createProgramFromSecripts(gl, ["color-veretx-shader", "color-fragment-shader"]);
+        let lampShader = webglUtils.createProgramFromSecripts(gl, ["lamp-veretx-shader", "lamp-fragment-shader"]);
+
+        let vertices = [
+            -0.5, -0.5, -0.5,
+            0.5, -0.5, -0.5,
+            0.5, 0.5, -0.5,
+            0.5, 0.5, -0.5,
+            -0.5, 0.5, -0.5,
+            -0.5, -0.5, -0.5,
+
+            -0.5, -0.5, 0.5,
+            0.5, -0.5, 0.5,
+            0.5, 0.5, 0.5,
+            0.5, 0.5, 0.5,
+            -0.5, 0.5, 0.5,
+            -0.5, -0.5, 0.5,
+
+            -0.5, 0.5, 0.5,
+            -0.5, 0.5, -0.5,
+            -0.5, -0.5, -0.5,
+            -0.5, -0.5, -0.5,
+            -0.5, -0.5, 0.5,
+            -0.5, 0.5, 0.5,
+
+            0.5, 0.5, 0.5,
+            0.5, 0.5, -0.5,
+            0.5, -0.5, -0.5,
+            0.5, -0.5, -0.5,
+            0.5, -0.5, 0.5,
+            0.5, 0.5, 0.5,
+
+            -0.5, -0.5, -0.5,
+            0.5, -0.5, -0.5,
+            0.5, -0.5, 0.5,
+            0.5, -0.5, 0.5,
+            -0.5, -0.5, 0.5,
+            -0.5, -0.5, -0.5,
+
+            -0.5, 0.5, -0.5,
+            0.5, 0.5, -0.5,
+            0.5, 0.5, 0.5,
+            0.5, 0.5, 0.5,
+            -0.5, 0.5, 0.5,
+            -0.5, 0.5, -0.5
+        ];
+
+        webglUtils.resizeCanvasToDisplaySize(canvas);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+        gl.enable(gl.DEPTH_TEST);
+
+        let lightingPositionAttributeLocation = gl.getAttribLocation(lightingShader, "a_position");
+        let positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(lightingPositionAttributeLocation);
+        gl.vertexAttribPointer(lightingPositionAttributeLocation, 3, gl.FLOAT, false, 3 * 4, 0);
+
+        let lampPositionAttributeLocation = gl.getAttribLocation(lampShader, "a_position");
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.enableVertexAttribArray(lampPositionAttributeLocation);
+        gl.vertexAttribPointer(lampPositionAttributeLocation, 3, gl.FLOAT, false, 3 * 4, 0);
+
+        gl.useProgram(lightingShader);
+        let lightColorLocation = gl.getUniformLocation(lightingShader, "u_objectColor");
+        let objectColorLocation = gl.getUniformLocation(lightingShader, "u_lightColor");
+
+        gl.uniform3fv(objectColorLocation, [1.0, 0.5, 0.31]);
+        gl.uniform3fv(lightColorLocation, [1.0, 1.0, 1.0]);
+
+        let lightingModelLocation = gl.getUniformLocation(lightingShader, "u_model");
+        let lightingViewLocation = gl.getUniformLocation(lightingShader, "u_view");
+        let lightingProjectionLocation = gl.getUniformLocation(lightingShader, "u_projection");
+
+        gl.useProgram(lampShader);
+
+        let lampModelLocation = gl.getUniformLocation(lampShader, "u_model");
+        let lampViewLocation = gl.getUniformLocation(lampShader, "u_view");
+        let lampProjectionLocation = gl.getUniformLocation(lampShader, "u_projection");
+
+        function drawScene() {
+
+            gl.clearColor(0.2, 0.3, 0.3, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            gl.useProgram(program);
+
+
+        }
+    }
+
 
 </script>
