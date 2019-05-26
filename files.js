@@ -182,6 +182,6 @@ var exercises={
         "013webgl-camera_mouse_zoom",
     ],
     "Light":[
-        "014webgl-colors.html",
+        "014webgl-colors",
     ]
 }

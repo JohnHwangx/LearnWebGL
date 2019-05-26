@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Exercise - Colors</title>
+    <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -13,8 +14,8 @@
 </body>
 
 </html>
-<script id="color-veretx-shader" type="x-shaedr/x-vertex">
-atteibute vec3 a_position;
+<script id="color-vertex-shader" type="x-shaedr/x-vertex">
+attribute vec3 a_position;
 
 uniform mat4 u_model;
 uniform mat4 u_view;
@@ -25,6 +26,8 @@ void main(){
 }
 </script>
 <script id="color-fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+
 uniform vec3 u_objectColor;
 uniform vec3 u_lightColor;
 
@@ -33,7 +36,7 @@ void main(){
 }
 </script>
 <script id="lamp-vertex-shader" type="x-shader/x-vertex">
-atteibute vec3 a_position;
+attribute vec3 a_position;
 
 uniform mat4 u_model;
 uniform mat4 u_view;
@@ -49,19 +52,107 @@ void main(){
     }
 </script>
 <script type="module">
-    "use strict"
+    "use strict";
 
-    import webglUtils from "../resources/webglUtils";
-    import glm from "../resources/glm";
+    import webglUtils from '../resources/webglUtils.js';
+    import glm from '../resources/glm.js';
+
+    let cameraPosition = [0, 0, 3];
+    let cameraFront = [0, 0, -1];
+    let cameraUp = [0, 1, 0];
+    let deltaTime = 0;
+    let lastFrame = 0;
+
+    let lastX, lastY;
+    let yaw = -90;
+    let pitch = 0;
+    let fov = 45;
+
+    let lightPos = [1.2, 1, 2];
 
     function main() {
 
         /**@type {HTMLCanvasElement} */
-        let canvas = document.getElementById("canvas");
-        let gl = canvas.getContext("webgl");
+        let canvas = document.getElementById("canvas"); document.onkeydown = (event) => {
+            /**@type {KeyboardEvent} */
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            let cameraSpeed = 2.5 * deltaTime;
+            if (e && e.keyCode == 87) { // 按 W 
+                cameraPosition[0] += cameraSpeed * cameraFront[0];
+                cameraPosition[1] += cameraSpeed * cameraFront[1];
+                cameraPosition[2] += cameraSpeed * cameraFront[2];
+                // console.log('wwwww');
+            } else if (e && e.keyCode == 83) { // 按 S 
+                cameraPosition[0] -= cameraSpeed * cameraFront[0];
+                cameraPosition[1] -= cameraSpeed * cameraFront[1];
+                cameraPosition[2] -= cameraSpeed * cameraFront[2];
+                // console.log('sssss');
+            } else if (e && e.keyCode == 65) { // A
+                // console.log('aaaaa');
+                cameraPosition[0] -= glm.normalize(glm.cross(cameraFront, cameraUp))[0] * cameraSpeed;
+                cameraPosition[1] -= glm.normalize(glm.cross(cameraFront, cameraUp))[1] * cameraSpeed;
+                cameraPosition[2] -= glm.normalize(glm.cross(cameraFront, cameraUp))[2] * cameraSpeed;
+            } else if (e && e.keyCode == 68) { // D
+                // console.log('ddddd');
+                cameraPosition[0] += glm.normalize(glm.cross(cameraFront, cameraUp))[0] * cameraSpeed;
+                cameraPosition[1] += glm.normalize(glm.cross(cameraFront, cameraUp))[1] * cameraSpeed;
+                cameraPosition[2] += glm.normalize(glm.cross(cameraFront, cameraUp))[2] * cameraSpeed;
+            }
+            drawScene();
+        }
 
-        let lightingShader = webglUtils.createProgramFromSecripts(gl, ["color-veretx-shader", "color-fragment-shader"]);
-        let lampShader = webglUtils.createProgramFromSecripts(gl, ["lamp-veretx-shader", "lamp-fragment-shader"]);
+        canvas.onmousedown = (e) => {
+            lastX = e.clientX;
+            lastY = e.clientY;
+            fndown(e);
+        }
+        /**@param {MouseEvent} event */
+        function fndown(event) {
+            canvas.onmousemove = (e) => {
+                let offsetX = e.clientX - lastX;
+                let offsetY = lastY - e.clientY;
+
+                lastX = e.clientX;
+                lastY = e.clientY;
+
+                // lastdom.innerHTML = ("(" + offsetX + " " + offsetY + ")");
+                let sensitivity = 0.1;
+                offsetX *= sensitivity;
+                offsetY *= sensitivity
+                yaw += offsetX;
+                pitch += offsetY;
+
+                let x = Math.cos(glm.radians(yaw)) * Math.cos(glm.radians(pitch));
+                let y = Math.sin(glm.radians(pitch));
+                let z = Math.sin(glm.radians(yaw)) * Math.cos(glm.radians(pitch));
+                cameraFront = glm.normalize([x, y, z]);
+                drawScene();
+                console.log("ondrag");
+            }
+            canvas.onmouseup = (e) => {
+                canvas.onmousemove = null;
+                console.log("up");
+            }
+        }
+
+        canvas.onwheel = (e) => {
+            let offsetY = e.deltaY * 0.1;
+            if (fov >= 1.0 && fov <= 45.0)
+                fov += offsetY;
+            if (fov <= 1.0)
+                fov = 1.0;
+            if (fov >= 45.0)
+                fov = 45.0;
+            drawScene();
+        }
+
+        let gl = canvas.getContext("webgl");
+        if (!gl) {
+            return;
+        }
+
+        let lightingShader = webglUtils.createProgramFromSecripts(gl, ["color-vertex-shader", "color-fragment-shader"]);
+        let lampShader = webglUtils.createProgramFromSecripts(gl, ["lamp-vertex-shader", "lamp-fragment-shader"]);
 
         let vertices = [
             -0.5, -0.5, -0.5,
@@ -146,11 +237,45 @@ void main(){
             gl.clearColor(0.2, 0.3, 0.3, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            gl.useProgram(program);
+            gl.useProgram(lightingShader);
 
+            let center = [cameraPosition[0] + cameraFront[0], cameraPosition[1] + cameraFront[1], cameraPosition[2] + cameraFront[2]]
+            let view = glm.lookAt(cameraPosition, center, cameraUp);
+            view = glm.inverse(view);
 
+            let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+            let projection = glm.perspective(Math.PI * fov / 180, aspect, 1, 2000);
+            gl.uniformMatrix4fv(lightingViewLocation, false, view);
+            gl.uniformMatrix4fv(lightingProjectionLocation, false, projection);
+            let model = glm.identity();
+            gl.uniformMatrix4fv(lightingModelLocation, false, model);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
+
+            gl.useProgram(lampShader);
+            gl.uniformMatrix4fv(lampProjectionLocation, false, projection);
+            gl.uniformMatrix4fv(lampViewLocation, false, view);
+            model = glm.translate(model, lightPos[0], lightPos[1], lightPos[2]);
+            model = glm.scale(model, 0.2, 0.2, 0.2);
+            gl.uniformMatrix4fv(lampModelLocation, false, model);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 36);
         }
+
+
+        function getTime(time) {
+
+            let currentFrame = time;
+            deltaTime = (currentFrame - lastFrame) * 0.001;
+            lastFrame = currentFrame;
+
+            requestAnimationFrame(getTime);
+        }
+        drawScene();
+        requestAnimationFrame(getTime);
     }
+
+    main();
 
 
 </script>
