@@ -9,17 +9,25 @@ html {
 }
 
 body {
-  background-color: #aaa;
   font-family: Sans-Serif;
+  margin: 0;
+  overflow: hidden;
 }
 
 canvas {
-  background-color: #fff;
-  border: 1px solid black;
+  /* background-color: #fff;
+  border: 1px solid black; */
   /* NOTE: This size is changed if in iframe - see below '.iframe canvas' */
-  width: 800px;
-  height: 600px;
   display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#info {
+    position: absolute;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
 }
 
 #uiContainer {

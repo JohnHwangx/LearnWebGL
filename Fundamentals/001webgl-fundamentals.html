@@ -10,12 +10,13 @@
 </head>
 
 <body>
-    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-fundamentals.html" target="_blank">WebGL 基础概念</a>
-    
-    <!-- <div class="description">
-        Drag sliders to translate, rotate, and scale.
-    </div> -->
-    <canvas id="canvas"></canvas>
+    <div id="info">
+        <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-fundamentals.html" target="_blank">WebGL
+            基础概念</a>
+    </div>
+    <div>
+        <canvas id="canvas"></canvas>
+    </div>
 </body>
 
 </html>
@@ -100,7 +101,7 @@ void main() {
         // 创建，加载，编译着色器
         var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
         var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-        
+
         // 链接连个着色器到着色程序
         var program = createProgram(gl, vertexShader, fragmentShader);
 

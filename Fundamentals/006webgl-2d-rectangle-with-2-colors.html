@@ -7,13 +7,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>WebGL - Rectangle with 2 colors</title>
     <link type="text/css" href="../resources/webgl-tutorials.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #info {
+            position: absolute;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+        }
+
+        canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="description">
-        Drag sliders to translate, rotate, and scale.
+    <div id="info">
+        <div class="description">
+            Drag sliders to translate, rotate, and scale.
+        </div>
+        <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-how-it-works.html" target="_blank">WebGL
+            工作原理</a>
     </div>
-    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-how-it-works.html" target="_blank">WebGL 工作原理</a>
     <canvas id="canvas"></canvas>
     <div id="uiContainer">
         <div id="ui">
