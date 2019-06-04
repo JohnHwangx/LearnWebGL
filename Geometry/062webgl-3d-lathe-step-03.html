@@ -8,7 +8,10 @@
 </head>
 
 <body>
-    <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-geometry-lathe.html" target="_blank">WebGL 三维几何加工</a>
+    <div id="info">
+        <a href="https://webglfundamentals.org/webgl/lessons/zh_cn/webgl-3d-geometry-lathe.html" target="_blank">WebGL
+            三维几何加工</a>
+    </div>
     <canvas></canvas>
     <div id="uiContainer">
         <div id="ui">
@@ -654,7 +657,7 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             const faceNormals = [];
 
             // 计算每个面的法向量，
-  // 计算过程中为每个面新建顶点
+            // 计算过程中为每个面新建顶点
             for (let i = 0; i < numFaces; ++i) {
                 const n1 = getNextIndex() * 3;
                 const n2 = getNextIndex() * 3;
@@ -685,20 +688,20 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             }
 
             // 我们需要算出共享的顶点
-  // 这并不像我们看着面那么简单 (三角形)
-  // 因为加入我们有一个标准的圆柱
-  //
-  //
-  //      3-4
-  //     /   \
-  //    2     5   从上往下看，从 S 走到 E, E 和 S 
-  //    1     6   是不同的点，因为它们不共享UV坐标。
-  //     \   /    
-  //      S/E
-  //
-  // 顶点在其实和结束位置并不是共享的
-  // 由于它们有不同的UV坐标，但如果不
-  // 把它们看作共享顶点就会得到错误结果
+            // 这并不像我们看着面那么简单 (三角形)
+            // 因为加入我们有一个标准的圆柱
+            //
+            //
+            //      3-4
+            //     /   \
+            //    2     5   从上往下看，从 S 走到 E, E 和 S 
+            //    1     6   是不同的点，因为它们不共享UV坐标。
+            //     \   /    
+            //      S/E
+            //
+            // 顶点在其实和结束位置并不是共享的
+            // 由于它们有不同的UV坐标，但如果不
+            // 把它们看作共享顶点就会得到错误结果
 
             const vertIndices = [];
             for (let i = 0; i < numVerts; ++i) {
@@ -724,10 +727,10 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
             }
 
             // 遍历面上的顶点计算每个顶点的法向量
-  // 只计算两面角度不大于 maxAngle 面
-  // 将结果写入 newPositions,
-  // newTexcoords 和 newNormals, 
-  // 丢弃相同的顶点
+            // 只计算两面角度不大于 maxAngle 面
+            // 将结果写入 newPositions,
+            // newTexcoords 和 newNormals, 
+            // 丢弃相同的顶点
             tempVerts = {};
             tempVertNdx = 0;
             const newPositions = [];
