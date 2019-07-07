@@ -251,9 +251,12 @@
 
           myAngle = angle - Math.PI / 2;
           if (myAngle < 0) {
-            myAngle = 2*Math.PI + myAngle;
+            myAngle = 2 * Math.PI + myAngle;
           }
-          ctx.fillText(myAngle.toFixed(2), circlePointX / 2  - 25, circlePointY / 2 );
+          ctx.fillText(myAngle.toFixed(2), circlePointX / 2 - 25, circlePointY / 2);
+
+          ctx.fillText(Math.sin(myAngle-Math.PI/4).toFixed(2),ax,ay);
+          ctx.fillText(Math.sin(myAngle+Math.PI/4).toFixed(2),bx,by);
 
           // ctx.fillStyle = "#f00";
           // ctx.fillRect(0, 0, circlePointX, 1);
